@@ -72,13 +72,16 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
-  console.log(`📊 Dashboard: http://localhost:${PORT}/api/dashboard`);
-  console.log(`🔐 Auth: http://localhost:${PORT}/api/auth`);
-  console.log(`📦 All endpoints available!`);
-});
+// Start server (only for local development, not Vercel)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    console.log(`📊 Dashboard: http://localhost:${PORT}/api/dashboard`);
+    console.log(`🔐 Auth: http://localhost:${PORT}/api/auth`);
+    console.log(`📦 All endpoints available!`);
+  });
+}
 
+// Export for Vercel serverless
 module.exports = app;
 
