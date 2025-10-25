@@ -643,16 +643,13 @@
             
             // Determine label based on contact type
             const isSupplier = window.contactType && window.contactType.isSupplier;
-            const isCustomer = window.contactType && window.contactType.isCustomer;
             
-            if (balance > 0) {
-                // Positive balance (Debit)
+            if (balance != 0) {
+                // Show appropriate label based on contact type
                 const label = isSupplier ? 'Payable' : 'Receivable';
-                balanceText = `<strong style="color: #dc2626;">${balance.toLocaleString('en-PK', {minimumFractionDigits: 2})} (${label})</strong>`;
-            } else if (balance < 0) {
-                // Negative balance (Credit)
-                const label = isSupplier ? 'Receivable' : 'Payable';
-                balanceText = `<strong style="color: #059669;">${Math.abs(balance).toLocaleString('en-PK', {minimumFractionDigits: 2})} (${label})</strong>`;
+                const absBalance = Math.abs(balance);
+                const color = balance > 0 ? '#dc2626' : '#059669'; // Red for Dr, Green for Cr
+                balanceText = `<strong style="color: ${color};">${absBalance.toLocaleString('en-PK', {minimumFractionDigits: 2})} (${label})</strong>`;
             } else {
                 balanceText = `<strong>0.00 (Settled)</strong>`;
             }
