@@ -1,178 +1,124 @@
-# Backend API Server
+# Zaviyar Chemicals - Inventory Management System
 
-Express.js backend server with MongoDB and PostgreSQL support.
+## 🚀 Vercel Deployment Guide
 
-## 🚀 Quick Start
+### Prerequisites
+- GitHub account
+- Vercel account (sign up at vercel.com)
+
+### Step 1: Create PostgreSQL Database on Vercel
+
+1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
+2. Click **"Storage"** tab
+3. Click **"Create Database"**
+4. Select **"Postgres"**
+5. Name it: `zaviyar-chemicals-db`
+6. Select region (closest to you)
+7. Click **"Create"**
+
+### Step 2: Deploy to Vercel
+
+1. Go to [Vercel Dashboard](https://vercel.com/new)
+2. Click **"Import Project"**
+3. Select **"Import Git Repository"**
+4. Choose: `zaviyar-chemicals-system`
+5. Configure:
+   - **Framework Preset:** Other
+   - **Root Directory:** `./` (leave empty or type `./`)
+   - **Build Command:** `npm install`
+   - **Output Directory:** (leave empty)
+   - **Install Command:** `npm install`
+
+6. Click **"Deploy"**
+
+### Step 3: Connect Database to Project
+
+1. Go to your project settings on Vercel
+2. Click **"Storage"** tab
+3. Click **"Connect Store"**
+4. Select your `zaviyar-chemicals-db`
+5. Vercel will automatically add environment variables:
+   - `DATABASE_URL`
+   - `POSTGRES_URL`
+
+### Step 4: Redeploy
+
+After connecting the database:
+1. Go to **"Deployments"** tab
+2. Click the **three dots** on the latest deployment
+3. Click **"Redeploy"**
+4. Your app is now live! 🎉
+
+---
+
+## 🌐 Your Demo URL
+
+```
+https://zaviyar-chemicals-system.vercel.app
+```
+
+### Default Login Credentials
+
+```
+Email: admin@zaviyar.com
+Password: admin123
+```
+
+---
+
+## 💻 Local Development
+
+### Using SQLite (No setup needed!)
 
 ```bash
 npm install
-npm run dev
+npm start
 ```
 
-## 📡 API Endpoints
+The app will automatically use SQLite for local development.
 
-### Health & Status
-- `GET /` - Server health check
-- `GET /api` - API information and available endpoints
+### Using PostgreSQL (Optional)
 
-### Users
-- `GET /api/users` - Get all users
-- `POST /api/users` - Create a new user
-  ```json
-  {
-    "name": "John Doe",
-    "email": "john@example.com"
-  }
-  ```
-
-### Test
-- `GET /api/test` - Test endpoint
-
-## 🗄️ Database Configuration
-
-### Using MongoDB
-
-1. Uncomment in `server.js`:
-   ```javascript
-   const { connectMongoDB } = require('./config/mongodb');
-   connectMongoDB();
-   ```
-
-2. Configure `.env`:
-   ```env
-   MONGODB_URI=mongodb://localhost:27017/mydatabase
-   ```
-
-3. The User model is in `models/User.mongodb.js`
-
-### Using PostgreSQL
-
-1. Uncomment in `server.js`:
-   ```javascript
-   const { connectPostgreSQL } = require('./config/postgresql');
-   connectPostgreSQL();
-   ```
-
-2. Configure `.env`:
-   ```env
-   POSTGRES_HOST=localhost
-   POSTGRES_PORT=5432
-   POSTGRES_USER=postgres
-   POSTGRES_PASSWORD=your_password
-   POSTGRES_DATABASE=mydatabase
-   ```
-
-3. Run the SQL schema:
-   ```bash
-   psql -U postgres -d mydatabase -f models/User.postgresql.sql
-   ```
-
-## 📁 Project Structure
-
+1. Install PostgreSQL locally
+2. Create a database
+3. Create `.env` file:
 ```
-backend/
-├── config/              # Database configurations
-│   ├── mongodb.js      # MongoDB connection
-│   └── postgresql.js   # PostgreSQL connection
-├── models/             # Database models
-│   ├── User.mongodb.js # Mongoose User model
-│   └── User.postgresql.sql # PostgreSQL schema
-├── routes/             # API routes
-│   └── api.js         # Main API routes
-├── server.js          # Express server
-├── .env               # Environment variables
-└── package.json       # Dependencies
+DATABASE_URL=postgresql://username:password@localhost:5432/zaviyar_db
 ```
+4. Run: `npm start`
 
-## 🔧 Environment Variables
+---
 
-```env
-# Server
-PORT=5000
-NODE_ENV=development
+## 📦 Features
 
-# MongoDB (choose one)
-MONGODB_URI=mongodb://localhost:27017/mydatabase
+- ✅ Inventory Management
+- ✅ Sales Tracking
+- ✅ Purchase Management
+- ✅ Customer & Supplier Management
+- ✅ Professional Ledger Reports
+- ✅ Dashboard Analytics
+- ✅ Invoice Generation
+- ✅ Expense Tracking
+- ✅ Payment Management
 
-# PostgreSQL (choose one)
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=password
-POSTGRES_DATABASE=mydatabase
+---
 
-# Security
-JWT_SECRET=your_secret_key
+## 🛠️ Tech Stack
 
-# CORS
-FRONTEND_URL=http://localhost:3000
-```
+- **Backend:** Node.js + Express
+- **Database:** PostgreSQL (Production) / SQLite (Development)
+- **Frontend:** HTML + CSS + JavaScript
+- **Deployment:** Vercel
+- **Authentication:** JWT
 
-## 📦 Dependencies
+---
 
-### Production
-- **express** - Web framework
-- **cors** - CORS middleware
-- **dotenv** - Environment variables
-- **mongoose** - MongoDB ODM
-- **pg** - PostgreSQL client
+## 📞 Support
 
-### Development
-- **nodemon** - Auto-restart on changes
-- **typescript** - TypeScript support
-- **@types/** - Type definitions
+For issues or questions, contact the development team.
 
-## 🧪 Testing
+---
 
-### Manual Testing
+## 📝 License
 
-```bash
-# Health check
-curl http://localhost:5000
-
-# Get users
-curl http://localhost:5000/api/users
-
-# Create user
-curl -X POST http://localhost:5000/api/users \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Test","email":"test@example.com"}'
-```
-
-## 🛡️ Security Notes
-
-- Change `JWT_SECRET` in production
-- Use environment variables for sensitive data
-- Enable HTTPS in production
-- Implement rate limiting
-- Add input validation
-- Use helmet.js for security headers
-
-## 📝 Adding New Endpoints
-
-1. Create route handler in `routes/`
-2. Import and use in `server.js`
-3. Add database queries as needed
-4. Update API documentation
-
-Example:
-```javascript
-// routes/products.js
-const express = require('express');
-const router = express.Router();
-
-router.get('/', (req, res) => {
-  res.json({ products: [] });
-});
-
-module.exports = router;
-```
-
-## 🔄 Database Migration
-
-When switching databases:
-1. Comment out the current database connection
-2. Uncomment the new database connection
-3. Update environment variables
-4. Restart the server
-
+Copyright © 2024 Zaviyar Chemicals. All rights reserved.

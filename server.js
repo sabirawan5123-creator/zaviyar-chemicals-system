@@ -5,8 +5,8 @@ const dotenv = require('dotenv');
 // Load environment variables
 dotenv.config();
 
-// Import database (SQLite - simple file-based database)
-const db = require('./database');
+// Import database adapter (SQLite for dev, PostgreSQL for production)
+const db = require('./db-adapter');
 
 // Import routes
 const authRoutes = require('./routes/auth-simple');
