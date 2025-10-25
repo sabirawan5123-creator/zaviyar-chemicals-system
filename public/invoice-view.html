@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - Zaviyar Chemicals</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- html2pdf.js for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8edf2 100%);
+            padding: 10px;
+            min-height: 100vh;
+        }
+
+        .page-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+            transform: translateY(-2px);
+        }
+
+        .invoice-container {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .invoice-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .company-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .company-logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .company-details h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .company-details p {
+            font-size: 13px;
+            opacity: 0.95;
+            line-height: 1.7;
+        }
+
+        .invoice-title {
+            text-align: right;
+        }
+
+        .invoice-title h2 {
+            font-size: 42px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .invoice-title .invoice-number {
+            font-size: 18px;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .invoice-body {
+            padding: 40px;
+        }
+
+        .invoice-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .meta-section h3 {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #667eea;
+            letter-spacing: 1.2px;
+            margin-bottom: 12px;
+        }
+
+        .meta-section p {
+            color: #374151;
+            font-size: 14px;
+            line-height: 1.9;
+            font-weight: 600;
+        }
+
+        .meta-label {
+            color: #6b7280;
+            font-weight: 600;
+            display: inline-block;
+            min-width: 100px;
+        }
+
+        .meta-value {
+            color: #1f2937;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 30px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 18px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        th:last-child { text-align: right; }
+
+        tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        td {
+            padding: 18px 16px;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        td:last-child {
+            text-align: right;
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 15px;
+        }
+
+        .item-name {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .item-description {
+            color: #6b7280;
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .totals-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 3px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .totals {
+            min-width: 400px;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .total-row.subtotal {
+            color: #6b7280;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .total-row.tax, .total-row.discount {
+            color: #374151;
+        }
+
+        .total-row.discount .amount {
+            color: #ef4444;
+        }
+
+        .total-row.grand-total {
+            border-top: 3px solid #667eea;
+            padding-top: 20px;
+            margin-top: 16px;
+            font-size: 24px;
+            font-weight: 900;
+            color: #667eea;
+            background: white;
+            margin: 16px -25px -25px;
+            padding: 20px 25px;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .notes-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 5px solid #f59e0b;
+            border-radius: 12px;
+        }
+
+        .notes-section h3 {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #92400e;
+            margin-bottom: 10px;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notes-section p {
+            color: #78350f;
+            font-size: 14px;
+            line-height: 1.7;
+            font-weight: 600;
+        }
+
+        .invoice-footer {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            padding: 35px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .invoice-footer p {
+            font-size: 13px;
+            line-height: 1.9;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .invoice-footer strong {
+            font-weight: 800;
+            font-size: 15px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .status-paid {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            border: 2px solid #f59e0b;
+        }
+
+        .status-partial {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            border: 2px solid #3b82f6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 100px;
+            color: #6b7280;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        /* Print Styles */
+        @media print {
+            body { 
+                background: white; 
+                padding: 0; 
+            }
+            .action-buttons { 
+                display: none !important; 
+            }
+            .invoice-container { 
+                box-shadow: none; 
+                border-radius: 0; 
+            }
+            .page-wrapper {
+                max-width: 100%;
+            }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .invoice-body {
+                padding: 30px;
+            }
+            .totals {
+                min-width: 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
+            .action-buttons {
+                padding: 12px;
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+            
+            .btn {
+                padding: 10px 16px;
+                font-size: 13px;
+                gap: 6px;
+            }
+            
+            .invoice-header {
+                grid-template-columns: 1fr;
+                padding: 25px;
+                gap: 20px;
+            }
+            
+            .company-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .company-logo {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
+            }
+            
+            .company-details h1 {
+                font-size: 24px;
+            }
+            
+            .company-details p {
+                font-size: 12px;
+            }
+            
+            .invoice-title {
+                text-align: center;
+            }
+            
+            .invoice-title h2 {
+                font-size: 32px;
+            }
+            
+            .invoice-title .invoice-number {
+                font-size: 16px;
+            }
+            
+            .invoice-body {
+                padding: 20px;
+            }
+            
+            .invoice-meta {
+                grid-template-columns: 1fr;
+                padding: 20px;
+                gap: 20px;
+            }
+            
+            table {
+                font-size: 13px;
+            }
+            
+            th, td {
+                padding: 12px 10px;
+            }
+            
+            th {
+                font-size: 10px;
+            }
+            
+            .item-name {
+                font-size: 14px;
+            }
+            
+            td:last-child {
+                font-size: 14px;
+            }
+            
+            .totals {
+                min-width: 100%;
+                padding: 20px;
+            }
+            
+            .total-row {
+                font-size: 14px;
+                padding: 12px 0;
+            }
+            
+            .total-row.grand-total {
+                font-size: 20px;
+                padding: 18px 20px;
+                margin: 14px -20px -20px;
+            }
+            
+            .notes-section {
+                padding: 20px;
+            }
+            
+            .invoice-footer {
+                padding: 25px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .company-logo {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+            
+            .company-details h1 {
+                font-size: 20px;
+            }
+            
+            .invoice-title h2 {
+                font-size: 28px;
+            }
+            
+            .invoice-body {
+                padding: 15px;
+            }
+            
+            .invoice-meta {
+                padding: 15px;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+            
+            .item-name {
+                font-size: 13px;
+            }
+            
+            td:last-child {
+                font-size: 13px;
+            }
+            
+            .totals {
+                padding: 15px;
+            }
+            
+            .total-row {
+                font-size: 13px;
+            }
+            
+            .total-row.grand-total {
+                font-size: 18px;
+                padding: 15px;
+                margin: 12px -15px -15px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .invoice-header {
+                padding: 20px 15px;
+            }
+            
+            .company-details h1 {
+                font-size: 18px;
+            }
+            
+            .company-details p {
+                font-size: 11px;
+            }
+            
+            .invoice-title h2 {
+                font-size: 24px;
+            }
+            
+            .invoice-title .invoice-number {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+            
+            .invoice-body {
+                padding: 12px;
+            }
+            
+            .invoice-meta {
+                padding: 12px;
+                gap: 15px;
+            }
+            
+            .meta-section h3 {
+                font-size: 10px;
+            }
+            
+            .meta-section p {
+                font-size: 12px;
+            }
+            
+            table {
+                font-size: 11px;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+            }
+            
+            .total-row.grand-total {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="action-buttons" id="actionButtons">
+            <button class="btn btn-success" onclick="downloadPDF()">
+                📥 Download PDF
+            </button>
+            <button class="btn btn-primary" onclick="window.print()">
+                🖨️ Print Invoice
+            </button>
+            <button class="btn btn-secondary" onclick="window.history.back()">
+                ← Back
+            </button>
+        </div>
+
+        <div class="invoice-container" id="invoiceContainer">
+            <div class="loading">Loading invoice</div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/login.html';
+
+        // Get invoice ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const invoiceId = urlParams.get('id');
+
+        if (!invoiceId) {
+            document.getElementById('invoiceContainer').innerHTML = '<div class="loading">❌ No invoice ID provided</div>';
+        } else {
+            loadInvoice(invoiceId);
+        }
+
+        async function loadInvoice(id) {
+            try {
+                const response = await fetch(`/api/sales/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Invoice not found');
+
+                const result = await response.json();
+                const invoice = result.data;
+
+                // Get customer info
+                let customerName = 'Walk-in Customer';
+                let customerDetails = '';
+                if (invoice.customerId) {
+                    try {
+                        const customerRes = await fetch(`/api/contacts/${invoice.customerId}`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (customerRes.ok) {
+                            const customerData = await customerRes.json();
+                            const customer = customerData.data;
+                            customerName = customer.name;
+                            customerDetails = `
+                                ${customer.email ? `<br>Email: ${customer.email}` : ''}
+                                ${customer.phone ? `<br>Phone: ${customer.phone}` : ''}
+                                ${customer.address ? `<br>${customer.address}` : ''}
+                            `;
+                        }
+                    } catch (e) {
+                        console.log('Could not load customer');
+                    }
+                }
+
+                // Parse items
+                const items = typeof invoice.items === 'string' ? JSON.parse(invoice.items) : invoice.items;
+
+                // Format date
+                const invoiceDate = new Date(invoice.createdAt).toLocaleDateString('en-PK', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                // Generate invoice HTML
+                document.getElementById('invoiceContainer').innerHTML = `
+                    <div class="invoice-header">
+                        <div class="company-info">
+                            <div class="company-logo">🧪</div>
+                            <div class="company-details">
+                                <h1>Zaviyar Chemicals</h1>
+                                <p>Plot 234, Sector 25, Korangi Industrial Area<br>
+                                Karachi, Pakistan<br>
+                                📞 +92-21-35123456 | ✉️ info@zaviyarchemicals.pk</p>
+                            </div>
+                        </div>
+                        <div class="invoice-title">
+                            <h2>INVOICE</h2>
+                            <div class="invoice-number">${invoice.invoiceNo}</div>
+                        </div>
+                    </div>
+
+                    <div class="invoice-body">
+                        <div class="invoice-meta">
+                            <div class="meta-section">
+                                <h3>📋 Bill To</h3>
+                                <p>
+                                    <span class="meta-value" style="font-size: 16px; display: block; margin-bottom: 8px;">${customerName}</span>
+                                    <span style="font-size: 12px; color: #6b7280;">${customerDetails}</span>
+                                </p>
+                            </div>
+                            <div class="meta-section">
+                                <h3>📅 Invoice Details</h3>
+                                <p>
+                                    <span class="meta-label">Date:</span> <span class="meta-value">${invoiceDate}</span><br>
+                                    <span class="meta-label">Payment:</span> <span class="meta-value">${invoice.paymentMethod || 'N/A'}</span><br>
+                                    <span class="meta-label">Status:</span> 
+                                    <span class="status-badge status-${invoice.paymentStatus.toLowerCase()}">
+                                        ${invoice.paymentStatus}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%;">Item Description</th>
+                                    <th style="width: 15%;">Quantity</th>
+                                    <th style="width: 15%;">Unit Price</th>
+                                    <th style="width: 20%;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${items.map((item, index) => `
+                                    <tr>
+                                        <td>
+                                            <div class="item-name">${index + 1}. ${item.name || item.productName}</div>
+                                            ${item.description ? `<div class="item-description">${item.description}</div>` : ''}
+                                        </td>
+                                        <td>${item.qty || item.quantity}</td>
+                                        <td>Rs. ${(item.price || 0).toLocaleString('en-PK', {minimumFractionDigits: 2})}</td>
+                                        <td>Rs. ${((item.qty || item.quantity) * item.price).toLocaleString('en-PK', {minimumFractionDigits: 2})}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+
+                        <div class="totals-section">
+                            <div class="totals">
+                                <div class="total-row subtotal">
+                                    <span>Subtotal:</span>
+                                    <span class="amount">Rs. ${(invoice.subtotal || 0).toLocaleString('en-PK', {minimumFractionDigits: 2})}</span>
+                                </div>
+                                ${invoice.tax > 0 ? `
+                                <div class="total-row tax">
+                                    <span>Tax (GST):</span>
+                                    <span class="amount">Rs. ${(invoice.tax || 0).toLocaleString('en-PK', {minimumFractionDigits: 2})}</span>
+                                </div>
+                                ` : ''}
+                                ${invoice.discount > 0 ? `
+                                <div class="total-row discount">
+                                    <span>Discount:</span>
+                                    <span class="amount">- Rs. ${(invoice.discount || 0).toLocaleString('en-PK', {minimumFractionDigits: 2})}</span>
+                                </div>
+                                ` : ''}
+                                <div class="total-row grand-total">
+                                    <span>Total Amount:</span>
+                                    <span class="amount">Rs. ${(invoice.total || 0).toLocaleString('en-PK', {minimumFractionDigits: 2})}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        ${invoice.notes ? `
+                        <div class="notes-section">
+                            <h3>📝 Notes</h3>
+                            <p>${invoice.notes}</p>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="invoice-footer">
+                        <p><strong>Thank you for your business!</strong></p>
+                        <p>This is a computer-generated invoice and does not require a signature.</p>
+                        <p>For queries, contact: 📞 +92-21-35123456 | ✉️ info@zaviyarchemicals.pk</p>
+                    </div>
+                `;
+
+            } catch (error) {
+                document.getElementById('invoiceContainer').innerHTML = `
+                    <div class="loading" style="color: #ef4444;">
+                        ❌ Failed to load invoice: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Download as PDF function
+        function downloadPDF() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ Generating PDF...';
+            button.disabled = true;
+
+            const element = document.getElementById('invoiceContainer');
+            const opt = {
+                margin: [10, 10, 10, 10],
+                filename: `Invoice_${urlParams.get('id')}_${new Date().toISOString().split('T')[0]}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    letterRendering: true
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait' 
+                }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                button.innerHTML = '✅ Downloaded!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+            }).catch(err => {
+                console.error('PDF generation error:', err);
+                button.innerHTML = '❌ Error';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

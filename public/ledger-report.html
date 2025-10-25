@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Ledger Report - Zaviyar Chemicals</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .no-print {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .btn-success { background: #10b981; }
+        .btn-primary { background: #3b82f6; }
+        .btn-secondary { background: #6b7280; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
+
+        /* Report Header */
+        .report-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+        }
+
+        .company-name {
+            font-size: 28px;
+            font-weight: 800;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .report-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+            text-decoration: underline;
+        }
+
+        /* Report Info Section */
+        .report-info-section {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+        }
+
+        .party-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-row {
+            display: flex;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .info-label {
+            font-weight: 700;
+            color: #000;
+            min-width: 120px;
+        }
+
+        .info-value {
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .credit-info {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Ledger Table */
+        .ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            border: 2px solid #000;
+        }
+
+        .ledger-table thead {
+            background: #000;
+            color: white;
+        }
+
+        .ledger-table th {
+            padding: 10px 8px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-right: 1px solid #444;
+        }
+
+        .ledger-table th:last-child {
+            border-right: none;
+        }
+
+        .ledger-table tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .ledger-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .ledger-table td {
+            padding: 8px;
+            font-size: 12px;
+            border-right: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+
+        .ledger-table td:last-child {
+            border-right: none;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .description-cell {
+            font-size: 11px;
+            color: #374151;
+            line-height: 1.4;
+        }
+
+        .product-name {
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 2px;
+        }
+
+        .product-details {
+            color: #6b7280;
+            font-size: 10px;
+        }
+
+        .debit-amount {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        .credit-amount {
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .ledger-table tfoot {
+            background: #f3f4f6;
+            font-weight: 700;
+        }
+
+        .ledger-table tfoot tr {
+            border-top: 2px solid #000;
+        }
+
+        .ledger-table tfoot td {
+            padding: 12px 8px;
+            font-size: 13px;
+        }
+
+        .final-balance {
+            background: #000 !important;
+            color: white !important;
+        }
+
+        .report-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 2px solid #000;
+            font-size: 12px;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+
+            .ledger-table {
+                page-break-inside: auto;
+            }
+
+            .ledger-table tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            .ledger-table thead {
+                display: table-header-group;
+            }
+
+            .ledger-table tfoot {
+                display: table-footer-group;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .report-info-section {
+                grid-template-columns: 1fr;
+            }
+
+            .ledger-table {
+                font-size: 10px;
+            }
+
+            .ledger-table th,
+            .ledger-table td {
+                padding: 6px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="ledgerContainer">
+        <!-- Action Buttons (Hidden on Print) -->
+        <div class="no-print">
+            <button class="btn btn-success" id="downloadBtn" onclick="downloadPDF()">📥 Download PDF</button>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Print Report</button>
+            <button class="btn btn-secondary" onclick="window.close()">← Back</button>
+        </div>
+
+        <!-- Report Header -->
+        <div class="report-header">
+            <div class="company-name">ZAVIYAR CHEMICALS</div>
+            <div class="report-title">Customer Ledger Report</div>
+        </div>
+
+        <!-- Report Info -->
+        <div class="report-info-section">
+            <div class="party-details">
+                <div class="info-row">
+                    <span class="info-label">Date:</span>
+                    <span class="info-value" id="dateRange">All Time</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Party Name:</span>
+                    <span class="info-value" id="partyName">Loading...</span>
+                </div>
+            </div>
+            <div class="credit-info">
+                <div class="info-row">
+                    <span class="info-label">Cr Days:</span>
+                    <span class="info-value" id="crDays">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Cr Limit:</span>
+                    <span class="info-value" id="crLimit">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ledger Table -->
+        <table class="ledger-table">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">Date</th>
+                    <th style="width: 6%;" class="text-center">V.Type</th>
+                    <th style="width: 8%;" class="text-center">No</th>
+                    <th style="width: 40%;">Description</th>
+                    <th style="width: 7%;" class="text-right">Qty</th>
+                    <th style="width: 10%;" class="text-right">Rate</th>
+                    <th style="width: 10%;" class="text-right">Debit</th>
+                    <th style="width: 11%;" class="text-right">Credit</th>
+                </tr>
+            </thead>
+            <tbody id="ledgerBody">
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 40px;">
+                        ⏳ Loading ledger data...
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6" class="text-right"><strong>TOTAL:</strong></td>
+                    <td class="text-right total-debit"><strong>0.00</strong></td>
+                    <td class="text-right total-credit"><strong>0.00</strong></td>
+                </tr>
+                <tr class="final-balance">
+                    <td colspan="6" class="text-right"><strong>BALANCE:</strong></td>
+                    <td colspan="2" class="text-right final-balance-amount"><strong>0.00</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- Report Footer -->
+        <div class="report-footer">
+            <div>
+                <strong>Prepared By:</strong> <span id="preparedBy">Admin</span>
+            </div>
+            <div>
+                <strong>Page</strong> <span id="pageNumber">1</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const contactId = urlParams.get('id');
+
+        console.log('🔍 Ledger Report Initialize');
+        console.log('   Full URL:', window.location.href);
+        console.log('   Contact ID from URL:', contactId);
+        console.log('   Contact ID type:', typeof contactId);
+        console.log('   User:', user);
+        console.log('   Token:', token ? 'Present' : 'Missing');
+
+        document.getElementById('preparedBy').textContent = user.name || 'Admin';
+
+        if (!contactId || contactId === 'null' || contactId === 'undefined') {
+            const errorMsg = `No valid contact ID. URL: ${window.location.href}`;
+            console.error('❌', errorMsg);
+            alert('❌ No contact selected. Please click on a contact from the Contacts page.');
+            document.getElementById('partyName').textContent = 'No Contact Selected';
+            document.getElementById('ledgerBody').innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 40px; color: #dc2626;">
+                        ❌ No contact selected
+                        <br><br>
+                        <small>Please go back to Contacts page and click the Ledger button on a contact</small>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        if (!token) {
+            alert('❌ Authentication token missing. Please log in again.');
+            window.location.href = '/login.html';
+            throw new Error('No authentication token');
+        }
+
+        async function loadLedger() {
+            try {
+                console.log('📊 Loading ledger for contact ID:', contactId);
+                console.log('🔑 Token:', token ? 'Present' : 'Missing');
+
+                // Fetch contact details
+                const contactRes = await fetch(`/api/contacts/${contactId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                console.log('📡 Contact API Response Status:', contactRes.status);
+                console.log('📡 Contact API Response OK:', contactRes.ok);
+
+                if (!contactRes.ok) {
+                    let errorMessage = `HTTP ${contactRes.status}: ${contactRes.statusText}`;
+                    try {
+                        const errorData = await contactRes.json();
+                        console.error('❌ Contact API Error Data:', errorData);
+                        errorMessage = errorData.message || errorMessage;
+                    } catch (parseError) {
+                        console.error('❌ Could not parse error response');
+                    }
+                    throw new Error(`Failed to load contact - ${errorMessage}`);
+                }
+
+                const contactData = await contactRes.json();
+                console.log('📦 Contact Data:', contactData);
+                
+                const contact = contactData.data;
+
+                if (!contact) {
+                    throw new Error('Contact data is empty or not found');
+                }
+
+                console.log('✅ Contact loaded:', contact);
+
+                // Set party name and type
+                document.getElementById('partyName').textContent = contact.name;
+
+                // Fetch sales, purchases, and products
+                const [salesRes, purchasesRes, productsRes] = await Promise.all([
+                    fetch('/api/sales', { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch('/api/purchases', { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch('/api/products', { headers: { 'Authorization': `Bearer ${token}` } })
+                ]);
+
+                const allSales = (await salesRes.json()).data || [];
+                const allPurchases = (await purchasesRes.json()).data || [];
+                const products = (await productsRes.json()).data || [];
+
+                console.log('📦 Sales:', allSales.length);
+                console.log('🛒 Purchases:', allPurchases.length);
+                console.log('📦 Products:', products.length);
+
+                // Create product map for quick lookup
+                const productMap = {};
+                products.forEach(p => {
+                    productMap[p.id] = p;
+                });
+
+                // Filter transactions for this contact
+                const contactSales = allSales.filter(s => s.customerId == contactId);
+                const contactPurchases = allPurchases.filter(p => p.supplierId == contactId);
+
+                console.log('✅ Contact Sales:', contactSales.length);
+                console.log('✅ Contact Purchases:', contactPurchases.length);
+
+                // Build ledger entries with product details
+                const ledgerEntries = [];
+
+                // Add sales
+                for (const sale of contactSales) {
+                    // Parse items if it's a JSON string
+                    let items = [];
+                    try {
+                        items = typeof sale.items === 'string' ? JSON.parse(sale.items) : (sale.items || []);
+                    } catch (e) {
+                        console.error('Error parsing sale items:', e);
+                    }
+
+                    if (items.length > 0) {
+                        // Add each item as separate line
+                        items.forEach((item, index) => {
+                            const product = productMap[item.productId] || {};
+                            ledgerEntries.push({
+                                date: sale.invoiceDate || sale.createdAt,
+                                vType: 'SL',
+                                no: sale.invoiceNo,
+                                description: product.name || item.name || 'Product',
+                                details: `PO# Unit BAG DC# -Inv No: ${sale.invoiceNo}`,
+                                qty: item.quantity || 0,
+                                rate: item.price || 0,
+                                debit: (item.quantity || 0) * (item.price || 0),
+                                credit: 0,
+                                isFirstLine: index === 0
+                            });
+                        });
+                    } else {
+                        // No items, add single line
+                        ledgerEntries.push({
+                            date: sale.invoiceDate || sale.createdAt,
+                            vType: 'SL',
+                            no: sale.invoiceNo,
+                            description: `Sale Invoice #${sale.invoiceNo}`,
+                            details: '',
+                            qty: 0,
+                            rate: 0,
+                            debit: sale.total || 0,
+                            credit: 0,
+                            isFirstLine: true
+                        });
+                    }
+                }
+
+                // Add purchases
+                for (const purchase of contactPurchases) {
+                    // Parse items if it's a JSON string
+                    let items = [];
+                    try {
+                        items = typeof purchase.items === 'string' ? JSON.parse(purchase.items) : (purchase.items || []);
+                    } catch (e) {
+                        console.error('Error parsing purchase items:', e);
+                    }
+
+                    if (items.length > 0) {
+                        // Add each item as separate line
+                        items.forEach((item, index) => {
+                            const product = productMap[item.productId] || {};
+                            ledgerEntries.push({
+                                date: purchase.purchaseDate || purchase.createdAt,
+                                vType: 'PUR',
+                                no: purchase.purchaseNo,
+                                description: product.name || item.name || 'Product',
+                                details: `PO# Unit BAG DC# -Inv No: ${purchase.purchaseNo}`,
+                                qty: item.quantity || 0,
+                                rate: item.price || 0,
+                                debit: (item.quantity || 0) * (item.price || 0),
+                                credit: 0,
+                                isFirstLine: index === 0
+                            });
+                        });
+                    } else {
+                        // No items, add single line
+                        ledgerEntries.push({
+                            date: purchase.purchaseDate || purchase.createdAt,
+                            vType: 'PUR',
+                            no: purchase.purchaseNo,
+                            description: `Purchase Order #${purchase.purchaseNo}`,
+                            details: '',
+                            qty: 0,
+                            rate: 0,
+                            debit: purchase.total || 0,
+                            credit: 0,
+                            isFirstLine: true
+                        });
+                    }
+                }
+
+                // Sort by date
+                ledgerEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                displayLedger(ledgerEntries, contact);
+
+            } catch (error) {
+                console.error('❌ Ledger load error:', error);
+                console.error('Error details:', error.message, error.stack);
+                document.getElementById('partyName').textContent = 'Error Loading Contact';
+                document.getElementById('ledgerBody').innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: #dc2626;">
+                            ❌ Error loading ledger: ${error.message || error.toString() || 'Unknown error occurred'}
+                            <br><br>
+                            <small style="color: #6b7280;">Please check console (F12) for more details</small>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function displayLedger(entries, contact) {
+            const tbody = document.getElementById('ledgerBody');
+
+            if (entries.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: #6b7280;">
+                            No transactions found for this contact.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            let totalDebit = 0;
+            let totalCredit = 0;
+
+            entries.forEach(entry => {
+                const date = new Date(entry.date).toLocaleDateString('en-GB');
+                
+                html += `
+                    <tr>
+                        <td>${entry.isFirstLine ? date : ''}</td>
+                        <td class="text-center">${entry.isFirstLine ? entry.vType : ''}</td>
+                        <td class="text-center">${entry.isFirstLine ? entry.no : ''}</td>
+                        <td class="description-cell">
+                            <div class="product-name">${entry.description}</div>
+                            ${entry.details ? `<div class="product-details">${entry.details}</div>` : ''}
+                        </td>
+                        <td class="text-right">${entry.qty > 0 ? entry.qty.toFixed(2) : ''}</td>
+                        <td class="text-right">${entry.rate > 0 ? entry.rate.toLocaleString('en-PK', {minimumFractionDigits: 2}) : ''}</td>
+                        <td class="text-right ${entry.debit > 0 ? 'debit-amount' : ''}">
+                            ${entry.debit > 0 ? entry.debit.toLocaleString('en-PK', {minimumFractionDigits: 2}) : ''}
+                        </td>
+                        <td class="text-right ${entry.credit > 0 ? 'credit-amount' : ''}">
+                            ${entry.credit > 0 ? entry.credit.toLocaleString('en-PK', {minimumFractionDigits: 2}) : ''}
+                        </td>
+                    </tr>
+                `;
+
+                totalDebit += entry.debit;
+                totalCredit += entry.credit;
+            });
+
+            tbody.innerHTML = html;
+
+            // Update totals
+            document.querySelector('.total-debit').innerHTML = `<strong>${totalDebit.toLocaleString('en-PK', {minimumFractionDigits: 2})}</strong>`;
+            document.querySelector('.total-credit').innerHTML = `<strong>${totalCredit.toLocaleString('en-PK', {minimumFractionDigits: 2})}</strong>`;
+
+            const balance = totalDebit - totalCredit;
+            let balanceText = '';
+            if (balance > 0) {
+                balanceText = `<strong style="color: #dc2626;">${balance.toLocaleString('en-PK', {minimumFractionDigits: 2})} (Dr)</strong>`;
+            } else if (balance < 0) {
+                balanceText = `<strong style="color: #059669;">${Math.abs(balance).toLocaleString('en-PK', {minimumFractionDigits: 2})} (Cr)</strong>`;
+            } else {
+                balanceText = `<strong>0.00 (Settled)</strong>`;
+            }
+            document.querySelector('.final-balance-amount').innerHTML = balanceText;
+        }
+
+        function downloadPDF() {
+            const button = document.getElementById('downloadBtn');
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ Generating PDF...';
+            button.disabled = true;
+
+            const element = document.getElementById('ledgerContainer');
+            const partyName = document.getElementById('partyName').textContent;
+            
+            const opt = {
+                margin: [10, 10, 10, 10],
+                filename: `Ledger_${partyName.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    letterRendering: true
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'landscape' 
+                }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                button.innerHTML = '✅ Downloaded!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+            }).catch(err => {
+                console.error('PDF generation error:', err);
+                button.innerHTML = '❌ Error';
+                alert('Failed to generate PDF. Please try again.');
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+            });
+        }
+
+        // Load ledger on page load
+        loadLedger();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales - Zaviyar Chemicals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8edf2 100%);
+            min-height: 100vh;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 24px 40px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1::before {
+            content: '💰';
+            font-size: 32px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .container {
+            padding: 0 30px 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-bar input,
+        .search-bar select {
+            padding: 12px 16px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-bar input {
+            flex: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #6b7280;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #1f2937;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 900px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: 20px auto;
+        }
+        
+        /* Custom Scrollbar */
+        .modal-content::-webkit-scrollbar { width: 8px; }
+        .modal-content::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .modal-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .modal-content::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #1f2937;
+            font-size: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .products-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .products-section h3 {
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .product-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: end;
+        }
+
+        .totals-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f0f9ff;
+            border-radius: 8px;
+        }
+
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e7ff;
+        }
+
+        .totals-row:last-child {
+            border-bottom: none;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e40af;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        .error {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            border-radius: 8px;
+            color: #991b1b;
+            margin: 20px 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN FOR FORMS
+           ======================================== */
+        
+        /* Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+            .modal-content {
+                max-width: 700px;
+                padding: 25px;
+            }
+            
+            .form-row {
+                gap: 12px;
+            }
+            
+            .product-row {
+                grid-template-columns: 1.5fr 1fr 1fr 1fr auto;
+                gap: 8px;
+            }
+        }
+        
+        /* Mobile Landscape & Small Tablets (481px - 768px) */
+        @media (max-width: 768px) {
+            .modal-content {
+                max-width: 95%;
+                width: 95%;
+                padding: 20px;
+                margin: 10px;
+                max-height: 90vh;
+            }
+            
+            .modal-header h2 {
+                font-size: 18px;
+            }
+            
+            .close-btn {
+                font-size: 28px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .form-group {
+                margin-bottom: 16px;
+            }
+            
+            .form-group label {
+                font-size: 13px;
+                margin-bottom: 6px;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+            
+            .product-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 15px;
+                background: white;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                border: 2px solid #e5e7eb;
+            }
+            
+            .product-row button {
+                width: 100%;
+                margin-top: 5px;
+            }
+            
+            .products-section {
+                padding: 15px;
+                margin: 20px 0;
+            }
+            
+            .products-section h3 {
+                font-size: 15px;
+            }
+            
+            .totals-section {
+                padding: 15px;
+            }
+            
+            .btn {
+                padding: 12px 18px;
+                font-size: 13px;
+            }
+            
+            .tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .tab {
+                padding: 10px 18px;
+                font-size: 13px;
+                white-space: nowrap;
+            }
+            
+            .header {
+                padding: 18px 20px;
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .header-actions .btn {
+                width: 100%;
+            }
+            
+            .container {
+                padding: 0 15px 15px;
+            }
+            
+            .search-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .search-bar input,
+            .search-bar select {
+                width: 100%;
+            }
+        }
+        
+        /* Mobile Portrait (320px - 480px) */
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 100%;
+                height: 100%;
+                max-height: 100vh;
+                max-width: 100%;
+                border-radius: 0;
+                padding: 15px;
+                margin: 0;
+            }
+            
+            .modal-header {
+                margin-bottom: 15px;
+                padding-bottom: 12px;
+                border-bottom: 2px solid #e5e7eb;
+            }
+            
+            .modal-header h2 {
+                font-size: 16px;
+            }
+            
+            .close-btn {
+                font-size: 32px;
+                padding: 0;
+                min-width: 32px;
+            }
+            
+            .form-group {
+                margin-bottom: 14px;
+            }
+            
+            .form-group label {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+            
+            .product-row {
+                padding: 12px;
+                gap: 8px;
+            }
+            
+            .products-section {
+                padding: 12px;
+                margin: 15px 0;
+            }
+            
+            .products-section h3 {
+                font-size: 14px;
+                margin-bottom: 12px;
+            }
+            
+            .totals-section {
+                padding: 12px;
+            }
+            
+            .totals-row {
+                padding: 6px 0;
+                font-size: 13px;
+            }
+            
+            .totals-row:last-child {
+                font-size: 16px;
+            }
+            
+            .btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 18px;
+            }
+            
+            .header h1::before {
+                font-size: 24px;
+            }
+            
+            .container {
+                padding: 0 10px 10px;
+            }
+            
+            .card {
+                padding: 15px;
+                border-radius: 8px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+            }
+            
+            th {
+                font-size: 10px;
+            }
+        }
+        
+        /* Extra Small Mobile (< 360px) */
+        @media (max-width: 360px) {
+            .modal-content {
+                padding: 12px;
+            }
+            
+            .modal-header h2 {
+                font-size: 15px;
+            }
+            
+            .form-group label {
+                font-size: 11px;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+            
+            .product-row {
+                padding: 10px;
+            }
+            
+            .btn {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+            
+            .header h1 {
+                font-size: 16px;
+            }
+            
+            table {
+                font-size: 11px;
+            }
+            
+            th, td {
+                padding: 6px 4px;
+            }
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .invoice-print, .invoice-print * {
+                visibility: visible;
+            }
+            .invoice-print {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Sales Management</h1>
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="window.location.href='/dashboard.html'">Back to Dashboard</button>
+            <button class="btn btn-primary" onclick="openCreateInvoice()">+ New Invoice</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('all')">All Sales</div>
+            <div class="tab" onclick="switchTab('paid')">Paid</div>
+            <div class="tab" onclick="switchTab('pending')">Pending</div>
+            <div class="tab" onclick="switchTab('partial')">Partial</div>
+        </div>
+
+        <div class="card">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by invoice number or customer..." onkeyup="searchSales()">
+                <input type="date" id="fromDate" onchange="searchSales()">
+                <input type="date" id="toDate" onchange="searchSales()">
+            </div>
+
+            <div id="salesList">
+                <div class="loading">Loading sales...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Invoice Modal -->
+    <div id="invoiceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💰 Create Sales Invoice</h2>
+                <button class="close-btn" onclick="closeInvoiceModal()" title="Close (Esc)">&times;</button>
+            </div>
+
+            <form id="invoiceForm" onsubmit="saveInvoice(event)">
+                <!-- Invoice Details Section -->
+                <div style="background: #f0f9ff; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="color: #0284c7; font-size: 16px; margin-bottom: 15px; font-weight: 700;">📋 Invoice Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Invoice Number <span style="color: #ef4444;">*</span></label>
+                            <input type="text" id="invoiceNo" required readonly value="Loading..." style="background: #e0f2fe; font-weight: 700; color: #0369a1;">
+                            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Auto-generated</small>
+                        </div>
+                        <div class="form-group">
+                            <label>📅 Invoice Date <span style="color: #ef4444;">*</span></label>
+                            <input type="date" id="invoiceDate" required>
+                            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Date of sale</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Section -->
+                <div style="background: #fef3c7; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="color: #b45309; font-size: 16px; margin-bottom: 15px; font-weight: 700;">👤 Customer Information</h3>
+                    <div class="form-group">
+                        <label>Select Customer <span style="color: #ef4444;">*</span></label>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="customerId" required onchange="loadCustomerInfo()" style="flex: 1;">
+                                <option value="">-- Choose a customer --</option>
+                            </select>
+                            <button type="button" class="btn btn-primary" onclick="window.location.href='/contacts.html'" style="white-space: nowrap;">➕ New Customer</button>
+                        </div>
+                        <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Select from existing or add new</small>
+                    </div>
+                </div>
+
+                <!-- Products Section -->
+                <div class="products-section" style="background: #f0fdf4; border: 2px dashed #86efac; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="color: #15803d; font-size: 16px; margin-bottom: 15px; font-weight: 700;">📦 Product Items</h3>
+                    <div id="productRows" style="margin-bottom: 15px;">
+                        <!-- Product rows will be added here -->
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addProductRow()" style="width: 100%; font-size: 15px; font-weight: 700;">
+                        ➕ Add Another Product
+                    </button>
+                    <small style="color: #64748b; font-size: 12px; margin-top: 8px; display: block; text-align: center;">Add all items included in this sale</small>
+                </div>
+
+                <!-- Calculations Section -->
+                <div style="background: #fef2f2; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="color: #dc2626; font-size: 16px; margin-bottom: 15px; font-weight: 700;">🧮 Discounts & Tax</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>💸 Discount (Rs.)</label>
+                            <input type="number" id="discount" value="0" step="0.01" min="0" onchange="calculateTotal()" placeholder="0.00">
+                            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Flat discount amount</small>
+                        </div>
+                        <div class="form-group">
+                            <label>📊 Tax Rate (%)</label>
+                            <input type="number" id="tax" value="3" step="0.01" min="0" max="100" onchange="calculateTotal()" placeholder="0.00">
+                            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Tax percentage</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Totals Display -->
+                <div class="totals-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                    <div class="totals-row" style="border-bottom-color: rgba(255,255,255,0.2);">
+                        <span style="font-size: 15px;">Subtotal:</span>
+                        <span id="subtotalDisplay" style="font-size: 16px; font-weight: 700;">Rs. 0.00</span>
+                    </div>
+                    <div class="totals-row" style="border-bottom-color: rgba(255,255,255,0.2);">
+                        <span style="font-size: 15px;">Discount:</span>
+                        <span id="discountDisplay" style="font-size: 16px; font-weight: 700;">Rs. 0.00</span>
+                    </div>
+                    <div class="totals-row" style="border-bottom-color: rgba(255,255,255,0.2);">
+                        <span style="font-size: 15px;">Tax:</span>
+                        <span id="taxDisplay" style="font-size: 16px; font-weight: 700;">Rs. 0.00</span>
+                    </div>
+                    <div class="totals-row" style="padding-top: 15px; margin-top: 10px; border-top: 2px solid rgba(255,255,255,0.3);">
+                        <span style="font-size: 18px; font-weight: 800;">💰 Total Amount:</span>
+                        <span id="totalDisplay" style="font-size: 22px; font-weight: 900;">Rs. 0.00</span>
+                    </div>
+                </div>
+
+                <!-- Payment Section -->
+                <div style="background: #ede9fe; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="color: #7c3aed; font-size: 16px; margin-bottom: 15px; font-weight: 700;">💳 Payment Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Payment Method <span style="color: #ef4444;">*</span></label>
+                            <select id="paymentMethod" required>
+                                <option value="">-- Select method --</option>
+                                <option value="cash">💵 Cash</option>
+                                <option value="bank">🏦 Bank Transfer</option>
+                                <option value="cheque">📝 Cheque</option>
+                                <option value="credit">💳 Credit</option>
+                            </select>
+                            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">How will payment be made?</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Status <span style="color: #ef4444;">*</span></label>
+                            <select id="paymentStatus" required>
+                                <option value="paid">✅ Paid</option>
+                                <option value="pending">⏳ Pending</option>
+                                <option value="partial">🔄 Partial</option>
+                            </select>
+                            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Current payment status</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes Section -->
+                <div class="form-group" style="background: #f9fafb; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                    <label>📝 Additional Notes</label>
+                    <textarea id="notes" rows="3" placeholder="Enter any special instructions, delivery notes, or other details..." style="resize: vertical; min-height: 80px;"></textarea>
+                    <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Optional: Add any relevant details</small>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 12px; justify-content: flex-end; padding-top: 20px; border-top: 2px solid #e5e7eb;">
+                    <button type="button" class="btn btn-secondary" onclick="closeInvoiceModal()" style="padding: 14px 28px; font-size: 15px;">
+                        ❌ Cancel
+                    </button>
+                    <button type="submit" class="btn btn-success" id="saveInvoiceBtn" style="padding: 14px 32px; font-size: 15px; font-weight: 700; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);">
+                        ✅ Create Invoice
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        let sales = [];
+        let customers = [];
+        let products = [];
+        let currentFilter = 'all';
+        let productRowCounter = 0;
+
+        // Initialize
+        init();
+
+        async function init() {
+            await loadCustomers();
+            await loadProducts();
+            await loadSales();
+        }
+
+        async function loadCustomers() {
+            try {
+                console.log('🔵 Loading customers...');
+                // Add timestamp to prevent caching
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/api/contacts?type=customer&_t=${timestamp}`, {
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    }
+                });
+                console.log('📡 Customer API Response Status:', response.status);
+                const result = await response.json();
+                console.log('📦 Customer API Result:', result);
+                customers = result.data || [];
+                console.log(`✅ Found ${customers.length} customers:`, customers.map(c => c.name));
+                
+                const select = document.getElementById('customerId');
+                select.innerHTML = '<option value="">Select Customer</option>';
+                customers.forEach(c => {
+                    select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                });
+                console.log('✅ Customer dropdown updated with', customers.length, 'customers');
+            } catch (error) {
+                console.error('❌ Failed to load customers:', error);
+                alert('Error loading customers: ' + error.message);
+            }
+        }
+
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                products = result.data || [];
+            } catch (error) {
+                console.error('Failed to load products:', error);
+            }
+        }
+
+        async function loadSales() {
+            try {
+                const response = await fetch('/api/sales', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.clear();
+                        window.location.href = '/login.html';
+                        return;
+                    }
+                    throw new Error('Failed to load sales');
+                }
+
+                const result = await response.json();
+                sales = result.data || [];
+                displaySales(sales);
+            } catch (error) {
+                document.getElementById('salesList').innerHTML = `
+                    <div class="error">Failed to load sales. ${error.message}</div>
+                `;
+            }
+        }
+
+        function switchTab(filter) {
+            currentFilter = filter;
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            const filtered = filter === 'all' ? sales : sales.filter(s => s.paymentStatus === filter);
+            displaySales(filtered);
+        }
+
+        function displaySales(salesToShow) {
+            const container = document.getElementById('salesList');
+            
+            if (salesToShow.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No sales found</h3>
+                        <p>Create your first invoice to get started</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Invoice No</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Total Amount</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            salesToShow.forEach(sale => {
+                const statusClass = sale.paymentStatus === 'paid' ? 'success' : 
+                                  sale.paymentStatus === 'partial' ? 'warning' : 'danger';
+                const customer = customers.find(c => c.id === sale.customerId);
+                const date = new Date(sale.createdAt).toLocaleDateString();
+
+                html += `
+                    <tr>
+                        <td><strong>${sale.invoiceNo}</strong></td>
+                        <td>${date}</td>
+                        <td>${customer ? customer.name : 'Unknown'}</td>
+                        <td><strong>Rs. ${sale.total.toLocaleString('en-PK', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>
+                        <td>${sale.paymentMethod.toUpperCase()}</td>
+                        <td><span class="badge badge-${statusClass}">${sale.paymentStatus.toUpperCase()}</span></td>
+                        <td>
+                            <button class="btn btn-primary" onclick="viewInvoice(${sale.id})">View</button>
+                            <button class="btn btn-danger" onclick="deleteSale(${sale.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        function searchSales() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+
+            let filtered = sales.filter(sale => {
+                const matchesFilter = currentFilter === 'all' || sale.paymentStatus === currentFilter;
+                const matchesSearch = sale.invoiceNo.toLowerCase().includes(searchTerm);
+                
+                let matchesDate = true;
+                if (fromDate || toDate) {
+                    const saleDate = new Date(sale.createdAt);
+                    if (fromDate) matchesDate = matchesDate && saleDate >= new Date(fromDate);
+                    if (toDate) matchesDate = matchesDate && saleDate <= new Date(toDate);
+                }
+                
+                return matchesFilter && matchesSearch && matchesDate;
+            });
+
+            displaySales(filtered);
+        }
+
+        async function openCreateInvoice() {
+            // Generate invoice number
+            const response = await fetch('/api/sales', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const result = await response.json();
+            const count = result.count || 0;
+            document.getElementById('invoiceNo').value = `INV-${String(count + 1).padStart(5, '0')}`;
+            
+            // Set today's date
+            document.getElementById('invoiceDate').value = new Date().toISOString().split('T')[0];
+            
+            // Clear form
+            document.getElementById('invoiceForm').reset();
+            document.getElementById('productRows').innerHTML = '';
+            productRowCounter = 0;
+            addProductRow();
+            
+            document.getElementById('invoiceModal').classList.add('active');
+        }
+
+        function addProductRow() {
+            const row = document.createElement('div');
+            row.className = 'product-row';
+            row.id = `product-row-${productRowCounter}`;
+            
+            let productsOptions = '<option value="">Select Product</option>';
+            products.forEach(p => {
+                productsOptions += `<option value="${p.id}" data-price="${p.price}" data-stock="${p.stock}">${p.name} (Stock: ${p.stock})</option>`;
+            });
+
+            row.innerHTML = `
+                <select class="product-select" onchange="updateRowPrice(${productRowCounter})" required>
+                    ${productsOptions}
+                </select>
+                <input type="number" class="quantity-input" placeholder="Qty" min="1" value="1" onchange="updateRowPrice(${productRowCounter})" required>
+                <input type="number" class="price-input" placeholder="Price" step="0.01" min="0" readonly>
+                <input type="number" class="total-input" placeholder="Total" step="0.01" readonly>
+                <button type="button" class="btn btn-danger" onclick="removeProductRow(${productRowCounter})">×</button>
+            `;
+
+            document.getElementById('productRows').appendChild(row);
+            productRowCounter++;
+        }
+
+        function removeProductRow(id) {
+            document.getElementById(`product-row-${id}`).remove();
+            calculateTotal();
+        }
+
+        function updateRowPrice(id) {
+            const row = document.getElementById(`product-row-${id}`);
+            const select = row.querySelector('.product-select');
+            const qtyInput = row.querySelector('.quantity-input');
+            const priceInput = row.querySelector('.price-input');
+            const totalInput = row.querySelector('.total-input');
+
+            const selectedOption = select.options[select.selectedIndex];
+            if (selectedOption.value) {
+                const price = parseFloat(selectedOption.dataset.price);
+                const qty = parseInt(qtyInput.value) || 0;
+                
+                priceInput.value = price.toFixed(2);
+                totalInput.value = (price * qty).toFixed(2);
+            }
+
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            const rows = document.querySelectorAll('.product-row');
+            let subtotal = 0;
+
+            rows.forEach(row => {
+                const total = parseFloat(row.querySelector('.total-input').value) || 0;
+                subtotal += total;
+            });
+
+            const discount = parseFloat(document.getElementById('discount').value) || 0;
+            const taxPercent = parseFloat(document.getElementById('tax').value) || 0;
+            
+            const taxAmount = (subtotal - discount) * (taxPercent / 100);
+            const total = subtotal - discount + taxAmount;
+
+            document.getElementById('subtotalDisplay').textContent = `Rs. ${subtotal.toLocaleString('en-PK', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('discountDisplay').textContent = `Rs. ${discount.toLocaleString('en-PK', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('taxDisplay').textContent = `Rs. ${taxAmount.toLocaleString('en-PK', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('totalDisplay').textContent = `Rs. ${total.toLocaleString('en-PK', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+
+        async function saveInvoice(event) {
+            event.preventDefault();
+            
+            // Get product rows
+            const rows = document.querySelectorAll('.product-row');
+            const items = [];
+            
+            rows.forEach(row => {
+                const select = row.querySelector('.product-select');
+                const qty = parseInt(row.querySelector('.quantity-input').value);
+                const price = parseFloat(row.querySelector('.price-input').value);
+                
+                if (select.value) {
+                    items.push({
+                        productId: parseInt(select.value),
+                        productName: select.options[select.selectedIndex].text.split(' (')[0],
+                        quantity: qty,
+                        price: price,
+                        total: qty * price
+                    });
+                }
+            });
+
+            if (items.length === 0) {
+                alert('Please add at least one product');
+                return;
+            }
+
+            const subtotal = items.reduce((sum, item) => sum + item.total, 0);
+            const discount = parseFloat(document.getElementById('discount').value) || 0;
+            const tax = parseFloat(document.getElementById('tax').value) || 0;
+            const taxAmount = (subtotal - discount) * (tax / 100);
+            const total = subtotal - discount + taxAmount;
+
+            const data = {
+                invoiceNo: document.getElementById('invoiceNo').value,
+                customerId: parseInt(document.getElementById('customerId').value),
+                items: JSON.stringify(items),
+                subtotal,
+                tax: taxAmount,
+                discount,
+                total,
+                paymentMethod: document.getElementById('paymentMethod').value,
+                paymentStatus: document.getElementById('paymentStatus').value,
+                notes: document.getElementById('notes').value
+            };
+
+            const saveBtn = document.getElementById('saveInvoiceBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+
+            try {
+                const response = await fetch('/api/sales', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to create invoice');
+                }
+
+                closeInvoiceModal();
+                loadSales();
+                alert('Invoice created successfully!');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Create Invoice';
+            }
+        }
+
+        function closeInvoiceModal() {
+            document.getElementById('invoiceModal').classList.remove('active');
+        }
+
+        async function deleteSale(id) {
+            if (!confirm('Are you sure you want to delete this sale?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/sales/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete sale');
+                }
+
+                loadSales();
+                alert('Sale deleted successfully!');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function viewInvoice(id) {
+            window.location.href = `/invoice-simple.html?id=${id}`;
+        }
+    </script>
+</body>
+</html>
+

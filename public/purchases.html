@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchases - Zaviyar Chemicals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8edf2 100%);
+            min-height: 100vh;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            padding: 24px 40px;
+            box-shadow: 0 4px 20px rgba(249, 115, 22, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1::before {
+            content: '🛒';
+            font-size: 32px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .container {
+            padding: 0 30px 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-bar input {
+            padding: 12px 16px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-bar input:first-child {
+            flex: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #6b7280;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #1f2937;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 900px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: 20px auto;
+        }
+        
+        /* Custom Scrollbar */
+        .modal-content::-webkit-scrollbar { width: 8px; }
+        .modal-content::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .modal-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .modal-content::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #1f2937;
+            font-size: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .products-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .products-section h3 {
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .product-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: end;
+        }
+
+        .totals-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #fef3c7;
+            border-radius: 8px;
+        }
+
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #fde68a;
+        }
+
+        .totals-row:last-child {
+            border-bottom: none;
+            font-size: 18px;
+            font-weight: 700;
+            color: #78350f;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+        
+        /* ========================================
+           RESPONSIVE DESIGN FOR FORMS
+           ======================================== */
+        
+        /* Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+            .modal-content {
+                max-width: 700px;
+                padding: 25px;
+            }
+            
+            .form-row {
+                gap: 12px;
+            }
+            
+            .product-row {
+                grid-template-columns: 1.5fr 1fr 1fr 1fr auto;
+                gap: 8px;
+            }
+        }
+        
+        /* Mobile Landscape & Small Tablets (481px - 768px) */
+        @media (max-width: 768px) {
+            .modal-content {
+                max-width: 95%;
+                width: 95%;
+                padding: 20px;
+                margin: 10px;
+                max-height: 90vh;
+            }
+            
+            .modal-header h2 {
+                font-size: 18px;
+            }
+            
+            .close-btn {
+                font-size: 28px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .form-group {
+                margin-bottom: 16px;
+            }
+            
+            .form-group label {
+                font-size: 13px;
+                margin-bottom: 6px;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+            
+            .product-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 15px;
+                background: white;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                border: 2px solid #e5e7eb;
+            }
+            
+            .product-row button {
+                width: 100%;
+                margin-top: 5px;
+            }
+            
+            .products-section {
+                padding: 15px;
+                margin: 20px 0;
+            }
+            
+            .products-section h3 {
+                font-size: 15px;
+            }
+            
+            .totals-section {
+                padding: 15px;
+            }
+            
+            .btn {
+                padding: 12px 18px;
+                font-size: 13px;
+            }
+            
+            .header {
+                padding: 18px 20px;
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .header-actions .btn {
+                width: 100%;
+            }
+            
+            .container {
+                padding: 0 15px 15px;
+            }
+            
+            .search-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .search-bar input,
+            .search-bar select {
+                width: 100%;
+            }
+        }
+        
+        /* Mobile Portrait (320px - 480px) */
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 100%;
+                height: 100%;
+                max-height: 100vh;
+                max-width: 100%;
+                border-radius: 0;
+                padding: 15px;
+                margin: 0;
+            }
+            
+            .modal-header {
+                margin-bottom: 15px;
+                padding-bottom: 12px;
+                border-bottom: 2px solid #e5e7eb;
+            }
+            
+            .modal-header h2 {
+                font-size: 16px;
+            }
+            
+            .close-btn {
+                font-size: 32px;
+                padding: 0;
+                min-width: 32px;
+            }
+            
+            .form-group {
+                margin-bottom: 14px;
+            }
+            
+            .form-group label {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+            
+            .product-row {
+                padding: 12px;
+                gap: 8px;
+            }
+            
+            .products-section {
+                padding: 12px;
+                margin: 15px 0;
+            }
+            
+            .products-section h3 {
+                font-size: 14px;
+                margin-bottom: 12px;
+            }
+            
+            .totals-section {
+                padding: 12px;
+            }
+            
+            .totals-row {
+                padding: 6px 0;
+                font-size: 13px;
+            }
+            
+            .totals-row:last-child {
+                font-size: 16px;
+            }
+            
+            .btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 18px;
+            }
+            
+            .header h1::before {
+                font-size: 24px;
+            }
+            
+            .container {
+                padding: 0 10px 10px;
+            }
+            
+            .card {
+                padding: 15px;
+                border-radius: 8px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+            }
+            
+            th {
+                font-size: 10px;
+            }
+        }
+        
+        /* Extra Small Mobile (< 360px) */
+        @media (max-width: 360px) {
+            .modal-content {
+                padding: 12px;
+            }
+            
+            .modal-header h2 {
+                font-size: 15px;
+            }
+            
+            .form-group label {
+                font-size: 11px;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+            
+            .product-row {
+                padding: 10px;
+            }
+            
+            .btn {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+            
+            .header h1 {
+                font-size: 16px;
+            }
+            
+            table {
+                font-size: 11px;
+            }
+            
+            th, td {
+                padding: 6px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Purchase Management</h1>
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="window.location.href='/dashboard.html'">Back to Dashboard</button>
+            <button class="btn btn-primary" onclick="openCreateOrder()">+ New Purchase Order</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('all')">All Purchases</div>
+            <div class="tab" onclick="switchTab('paid')">Paid</div>
+            <div class="tab" onclick="switchTab('pending')">Pending</div>
+            <div class="tab" onclick="switchTab('partial')">Partial</div>
+        </div>
+
+        <div class="card">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by PO number or supplier..." onkeyup="searchPurchases()">
+                <input type="date" id="fromDate" onchange="searchPurchases()">
+                <input type="date" id="toDate" onchange="searchPurchases()">
+            </div>
+
+            <div id="purchasesList">
+                <div class="loading">Loading purchases...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Purchase Order Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Purchase Order</h2>
+                <button class="close-btn" onclick="closeOrderModal()">&times;</button>
+            </div>
+
+            <form id="orderForm" onsubmit="saveOrder(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>PO Number *</label>
+                        <input type="text" id="purchaseNo" required readonly value="Loading...">
+                    </div>
+                    <div class="form-group">
+                        <label>Date *</label>
+                        <input type="date" id="purchaseDate" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Supplier *</label>
+                    <select id="supplierId" required>
+                        <option value="">Select Supplier</option>
+                    </select>
+                </div>
+
+                <div class="products-section">
+                    <h3>Products</h3>
+                    <div id="productRows"></div>
+                    <button type="button" class="btn btn-primary" onclick="addProductRow()">+ Add Product</button>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Discount</label>
+                        <input type="number" id="discount" value="0" step="0.01" min="0" onchange="calculateTotal()">
+                    </div>
+                    <div class="form-group">
+                        <label>Tax (%)</label>
+                        <input type="number" id="tax" value="0" step="0.01" min="0" onchange="calculateTotal()">
+                    </div>
+                </div>
+
+                <div class="totals-section">
+                    <div class="totals-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotalDisplay">$0.00</span>
+                    </div>
+                    <div class="totals-row">
+                        <span>Discount:</span>
+                        <span id="discountDisplay">$0.00</span>
+                    </div>
+                    <div class="totals-row">
+                        <span>Tax:</span>
+                        <span id="taxDisplay">$0.00</span>
+                    </div>
+                    <div class="totals-row">
+                        <span>Total Amount:</span>
+                        <span id="totalDisplay">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Payment Method *</label>
+                        <select id="paymentMethod" required>
+                            <option value="cash">Cash</option>
+                            <option value="bank">Bank</option>
+                            <option value="credit">Credit</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Status *</label>
+                        <select id="paymentStatus" required>
+                            <option value="paid">Paid</option>
+                            <option value="pending">Pending</option>
+                            <option value="partial">Partial</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="notes" rows="3"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeOrderModal()">Cancel</button>
+                    <button type="submit" class="btn btn-success" id="saveOrderBtn">Create Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        let purchases = [];
+        let suppliers = [];
+        let products = [];
+        let currentFilter = 'all';
+        let productRowCounter = 0;
+
+        init();
+
+        async function init() {
+            await loadSuppliers();
+            await loadProducts();
+            await loadPurchases();
+        }
+
+        async function loadSuppliers() {
+            try {
+                console.log('🔵 Loading suppliers...');
+                // Add timestamp to prevent caching
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/api/contacts?type=supplier&_t=${timestamp}`, {
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    }
+                });
+                console.log('📡 Supplier API Response Status:', response.status);
+                const result = await response.json();
+                console.log('📦 Supplier API Result:', result);
+                suppliers = result.data || [];
+                console.log(`✅ Found ${suppliers.length} suppliers:`, suppliers.map(s => s.name));
+                
+                const select = document.getElementById('supplierId');
+                select.innerHTML = '<option value="">Select Supplier</option>';
+                suppliers.forEach(s => {
+                    select.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+                });
+                console.log('✅ Supplier dropdown updated with', suppliers.length, 'suppliers');
+            } catch (error) {
+                console.error('❌ Failed to load suppliers:', error);
+                alert('Error loading suppliers: ' + error.message);
+            }
+        }
+
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                products = result.data || [];
+            } catch (error) {
+                console.error('Failed to load products:', error);
+            }
+        }
+
+        async function loadPurchases() {
+            try {
+                const response = await fetch('/api/purchases', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.clear();
+                        window.location.href = '/login.html';
+                        return;
+                    }
+                    throw new Error('Failed to load purchases');
+                }
+
+                const result = await response.json();
+                purchases = result.data || [];
+                displayPurchases(purchases);
+            } catch (error) {
+                document.getElementById('purchasesList').innerHTML = `
+                    <div class="error">Failed to load purchases. ${error.message}</div>
+                `;
+            }
+        }
+
+        function switchTab(filter) {
+            currentFilter = filter;
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            const filtered = filter === 'all' ? purchases : purchases.filter(p => p.paymentStatus === filter);
+            displayPurchases(filtered);
+        }
+
+        function displayPurchases(purchasesToShow) {
+            const container = document.getElementById('purchasesList');
+            
+            if (purchasesToShow.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No purchases found</h3>
+                        <p>Create your first purchase order to get started</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PO Number</th>
+                            <th>Date</th>
+                            <th>Supplier</th>
+                            <th>Total Amount</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            purchasesToShow.forEach(purchase => {
+                const statusClass = purchase.paymentStatus === 'paid' ? 'success' : 
+                                  purchase.paymentStatus === 'partial' ? 'warning' : 'danger';
+                const supplier = suppliers.find(s => s.id === purchase.supplierId);
+                const date = new Date(purchase.createdAt).toLocaleDateString();
+
+                html += `
+                    <tr>
+                        <td><strong>${purchase.purchaseNo}</strong></td>
+                        <td>${date}</td>
+                        <td>${supplier ? supplier.name : 'Unknown'}</td>
+                        <td><strong>Rs. ${purchase.total.toLocaleString('en-PK', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>
+                        <td>${purchase.paymentMethod.toUpperCase()}</td>
+                        <td><span class="badge badge-${statusClass}">${purchase.paymentStatus.toUpperCase()}</span></td>
+                        <td>
+                            <button class="btn btn-primary" onclick="viewOrder(${purchase.id})">View</button>
+                            <button class="btn btn-danger" onclick="deletePurchase(${purchase.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        function searchPurchases() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+
+            let filtered = purchases.filter(purchase => {
+                const matchesFilter = currentFilter === 'all' || purchase.paymentStatus === currentFilter;
+                const matchesSearch = purchase.purchaseNo.toLowerCase().includes(searchTerm);
+                
+                let matchesDate = true;
+                if (fromDate || toDate) {
+                    const purchaseDate = new Date(purchase.createdAt);
+                    if (fromDate) matchesDate = matchesDate && purchaseDate >= new Date(fromDate);
+                    if (toDate) matchesDate = matchesDate && purchaseDate <= new Date(toDate);
+                }
+                
+                return matchesFilter && matchesSearch && matchesDate;
+            });
+
+            displayPurchases(filtered);
+        }
+
+        async function openCreateOrder() {
+            const response = await fetch('/api/purchases', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const result = await response.json();
+            const count = result.count || 0;
+            document.getElementById('purchaseNo').value = `PO-${String(count + 1).padStart(5, '0')}`;
+            
+            document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('orderForm').reset();
+            document.getElementById('productRows').innerHTML = '';
+            productRowCounter = 0;
+            addProductRow();
+            
+            document.getElementById('orderModal').classList.add('active');
+        }
+
+        function addProductRow() {
+            const row = document.createElement('div');
+            row.className = 'product-row';
+            row.id = `product-row-${productRowCounter}`;
+            
+            let productsOptions = '<option value="">Select Product</option>';
+            products.forEach(p => {
+                productsOptions += `<option value="${p.id}" data-cost="${p.cost}">${p.name}</option>`;
+            });
+
+            row.innerHTML = `
+                <select class="product-select" onchange="updateRowPrice(${productRowCounter})" required>
+                    ${productsOptions}
+                </select>
+                <input type="number" class="quantity-input" placeholder="Qty" min="1" value="1" onchange="updateRowPrice(${productRowCounter})" required>
+                <input type="number" class="price-input" placeholder="Cost" step="0.01" min="0" readonly>
+                <input type="number" class="total-input" placeholder="Total" step="0.01" readonly>
+                <button type="button" class="btn btn-danger" onclick="removeProductRow(${productRowCounter})">×</button>
+            `;
+
+            document.getElementById('productRows').appendChild(row);
+            productRowCounter++;
+        }
+
+        function removeProductRow(id) {
+            document.getElementById(`product-row-${id}`).remove();
+            calculateTotal();
+        }
+
+        function updateRowPrice(id) {
+            const row = document.getElementById(`product-row-${id}`);
+            const select = row.querySelector('.product-select');
+            const qtyInput = row.querySelector('.quantity-input');
+            const priceInput = row.querySelector('.price-input');
+            const totalInput = row.querySelector('.total-input');
+
+            const selectedOption = select.options[select.selectedIndex];
+            if (selectedOption.value) {
+                const cost = parseFloat(selectedOption.dataset.cost);
+                const qty = parseInt(qtyInput.value) || 0;
+                
+                priceInput.value = cost.toFixed(2);
+                totalInput.value = (cost * qty).toFixed(2);
+            }
+
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            const rows = document.querySelectorAll('.product-row');
+            let subtotal = 0;
+
+            rows.forEach(row => {
+                const total = parseFloat(row.querySelector('.total-input').value) || 0;
+                subtotal += total;
+            });
+
+            const discount = parseFloat(document.getElementById('discount').value) || 0;
+            const taxPercent = parseFloat(document.getElementById('tax').value) || 0;
+            
+            const taxAmount = (subtotal - discount) * (taxPercent / 100);
+            const total = subtotal - discount + taxAmount;
+
+            document.getElementById('subtotalDisplay').textContent = `Rs. ${subtotal.toLocaleString('en-PK', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('discountDisplay').textContent = `Rs. ${discount.toLocaleString('en-PK', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('taxDisplay').textContent = `Rs. ${taxAmount.toLocaleString('en-PK', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('totalDisplay').textContent = `Rs. ${total.toLocaleString('en-PK', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+
+        async function saveOrder(event) {
+            event.preventDefault();
+            
+            const rows = document.querySelectorAll('.product-row');
+            const items = [];
+            
+            rows.forEach(row => {
+                const select = row.querySelector('.product-select');
+                const qty = parseInt(row.querySelector('.quantity-input').value);
+                const price = parseFloat(row.querySelector('.price-input').value);
+                
+                if (select.value) {
+                    items.push({
+                        productId: parseInt(select.value),
+                        productName: select.options[select.selectedIndex].text,
+                        quantity: qty,
+                        price: price,
+                        total: qty * price
+                    });
+                }
+            });
+
+            if (items.length === 0) {
+                alert('Please add at least one product');
+                return;
+            }
+
+            const subtotal = items.reduce((sum, item) => sum + item.total, 0);
+            const discount = parseFloat(document.getElementById('discount').value) || 0;
+            const tax = parseFloat(document.getElementById('tax').value) || 0;
+            const taxAmount = (subtotal - discount) * (tax / 100);
+            const total = subtotal - discount + taxAmount;
+
+            const data = {
+                purchaseNo: document.getElementById('purchaseNo').value,
+                supplierId: parseInt(document.getElementById('supplierId').value),
+                items: JSON.stringify(items),
+                subtotal,
+                tax: taxAmount,
+                discount,
+                total,
+                paymentMethod: document.getElementById('paymentMethod').value,
+                paymentStatus: document.getElementById('paymentStatus').value,
+                notes: document.getElementById('notes').value
+            };
+
+            const saveBtn = document.getElementById('saveOrderBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+
+            try {
+                const response = await fetch('/api/purchases', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to create purchase order');
+                }
+
+                closeOrderModal();
+                loadPurchases();
+                alert('Purchase order created successfully!');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Create Order';
+            }
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.remove('active');
+        }
+
+        async function deletePurchase(id) {
+            if (!confirm('Are you sure you want to delete this purchase?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/purchases/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete purchase');
+                }
+
+                loadPurchases();
+                alert('Purchase deleted successfully!');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function viewOrder(id) {
+            window.location.href = `/purchase-view.html?id=${id}`;
+        }
+    </script>
+</body>
+</html>
+

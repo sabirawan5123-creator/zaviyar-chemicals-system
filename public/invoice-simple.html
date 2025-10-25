@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sale Receipt - Zaviyar Chemicals</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- html2pdf.js for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .page-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+            transform: translateY(-2px);
+        }
+
+        .invoice-container {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 3px solid #000;
+        }
+
+        /* Simple Receipt Style Header */
+        .receipt-header {
+            background: white;
+            padding: 30px;
+            border-bottom: 3px solid #000;
+        }
+
+        .company-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .company-logo-simple {
+            width: 60px;
+            height: 60px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            border: 2px solid #000;
+        }
+
+        .company-name {
+            font-size: 32px;
+            font-weight: 900;
+            color: #000;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .receipt-subtitle {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 15px;
+            text-decoration: underline;
+        }
+
+        .contact-info {
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Invoice Info Bar */
+        .invoice-info-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 30px;
+            background: #f9fafb;
+            border-bottom: 2px solid #000;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .invoice-number {
+            color: #000;
+        }
+
+        .invoice-date {
+            color: #000;
+        }
+
+        /* Customer Info */
+        .customer-info {
+            padding: 20px 30px;
+            background: white;
+            border-bottom: 2px solid #000;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .customer-label {
+            color: #666;
+            display: inline;
+        }
+
+        .customer-name {
+            color: #000;
+            font-weight: 700;
+            display: inline;
+        }
+
+        /* Items Table - Receipt Style */
+        .items-table {
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #000;
+            color: white;
+        }
+
+        th {
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-right: 1px solid #333;
+        }
+
+        th:last-child {
+            border-right: none;
+            text-align: right;
+        }
+
+        th.center {
+            text-align: center;
+        }
+
+        th.right {
+            text-align: right;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        td {
+            padding: 15px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            border-right: 1px solid #ddd;
+        }
+
+        td:last-child {
+            border-right: none;
+            text-align: right;
+            font-weight: 700;
+            color: #000;
+        }
+
+        td.center {
+            text-align: center;
+        }
+
+        td.right {
+            text-align: right;
+        }
+
+        .item-name {
+            font-weight: 700;
+            color: #000;
+            font-size: 15px;
+        }
+
+        /* Summary Table */
+        .summary-table {
+            margin: 0;
+            border-top: 3px solid #000;
+        }
+
+        .summary-table tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .summary-table tr:last-child {
+            border-bottom: none;
+            background: #f9fafb;
+        }
+
+        .summary-table td {
+            padding: 15px 30px;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+        }
+
+        .summary-table td:first-child {
+            color: #000;
+            width: 70%;
+        }
+
+        .summary-table td:last-child {
+            color: #000;
+            font-size: 16px;
+            text-align: right;
+        }
+
+        .balance-row {
+            background: #000 !important;
+            color: white !important;
+        }
+
+        .balance-row td {
+            color: white !important;
+            font-size: 18px !important;
+            font-weight: 900 !important;
+        }
+
+        /* Footer */
+        .receipt-footer {
+            padding: 20px 30px;
+            text-align: center;
+            background: #f9fafb;
+            border-top: 2px solid #000;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .receipt-footer p {
+            margin: 5px 0;
+        }
+
+        .receipt-footer strong {
+            color: #000;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 100px;
+            color: #6b7280;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        /* Print Styles */
+        @media print {
+            body { 
+                background: white; 
+                padding: 0; 
+            }
+            .action-buttons { 
+                display: none !important; 
+            }
+            .invoice-container { 
+                box-shadow: none; 
+                border-radius: 0; 
+            }
+            .page-wrapper {
+                max-width: 100%;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .company-name {
+                font-size: 24px;
+            }
+
+            .company-logo-simple {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+
+            .invoice-info-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            th, td {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+
+            .summary-table td {
+                padding: 12px 15px;
+                font-size: 13px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .company-name {
+                font-size: 20px;
+            }
+
+            .receipt-header {
+                padding: 20px 15px;
+            }
+
+            .invoice-info-bar {
+                padding: 15px;
+            }
+
+            .customer-info {
+                padding: 15px;
+            }
+
+            th, td {
+                padding: 8px 6px;
+                font-size: 11px;
+            }
+
+            .summary-table td {
+                padding: 10px 15px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="action-buttons">
+            <button class="btn btn-success" onclick="downloadPDF()">
+                📥 Download PDF
+            </button>
+            <button class="btn btn-primary" onclick="window.print()">
+                🖨️ Print Receipt
+            </button>
+            <button class="btn btn-secondary" onclick="window.history.back()">
+                ← Back
+            </button>
+        </div>
+
+        <div class="invoice-container" id="invoiceContainer">
+            <div class="loading">Loading invoice</div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/login.html';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const invoiceId = urlParams.get('id');
+
+        if (!invoiceId) {
+            document.getElementById('invoiceContainer').innerHTML = '<div class="loading">❌ No invoice ID provided</div>';
+        } else {
+            loadInvoice(invoiceId);
+        }
+
+        async function loadInvoice(id) {
+            try {
+                const response = await fetch(`/api/sales/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Invoice not found');
+
+                const result = await response.json();
+                const invoice = result.data;
+
+                // Get customer info
+                let customerName = invoice.customerName || 'Cash Customer';
+                if (invoice.customerId) {
+                    try {
+                        const customerRes = await fetch(`/api/contacts/${invoice.customerId}`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (customerRes.ok) {
+                            const customerData = await customerRes.json();
+                            customerName = customerData.data.name;
+                        }
+                    } catch (e) {
+                        console.log('Could not load customer, using invoice customer name');
+                        // If fetch fails, use invoice customer name if available
+                        customerName = invoice.customerName || 'Cash Customer';
+                    }
+                }
+
+                // Parse items
+                const items = typeof invoice.items === 'string' ? JSON.parse(invoice.items) : invoice.items;
+
+                // Format date and time
+                const dateObj = new Date(invoice.createdAt || invoice.invoiceDate);
+                const invoiceDate = dateObj.toLocaleDateString('en-PK', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+                const invoiceTime = dateObj.toLocaleTimeString('en-PK', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                });
+
+                // Calculate totals
+                const subtotal = parseFloat(invoice.subtotal || invoice.total || 0);
+                const tax = parseFloat(invoice.tax || 0);
+                const discount = parseFloat(invoice.discount || 0);
+                const netTotal = subtotal + tax - discount;
+                
+                // Calculate actual cash paid (not just based on status)
+                let cashPaid = 0;
+                if (invoice.paymentStatus === 'paid') {
+                    cashPaid = netTotal;
+                } else if (invoice.paymentStatus === 'partial' && invoice.paidAmount) {
+                    cashPaid = parseFloat(invoice.paidAmount || 0);
+                } else if (invoice.paidAmount) {
+                    cashPaid = parseFloat(invoice.paidAmount || 0);
+                }
+                
+                const balance = netTotal - cashPaid;
+
+                // Generate invoice HTML
+                document.getElementById('invoiceContainer').innerHTML = `
+                    <!-- Header -->
+                    <div class="receipt-header">
+                        <div class="company-brand">
+                            <div class="company-logo-simple">🧪</div>
+                            <div class="company-name">ZAVIYAR CHEMICALS</div>
+                        </div>
+                        <div class="receipt-subtitle">Sale Receipt</div>
+                        <div style="text-align: center; font-size: 18px; font-weight: 700; color: #000; margin-top: 5px; margin-bottom: 15px;">Estimate</div>
+                        <div class="contact-info">
+                            <strong>Phone:</strong> Sheikh.Hamza Luqman 0320-0001292, Sheikh.Anas Luqman 0323-1616471<br>
+                            <strong>Office:</strong> 042-37379542
+                        </div>
+                    </div>
+
+                    <!-- Invoice Info Bar -->
+                    <div class="invoice-info-bar">
+                        <div class="invoice-number">Invoice# ${invoice.invoiceNo}</div>
+                        <div class="invoice-date">${invoiceDate} ${invoiceTime}</div>
+                    </div>
+
+                    <!-- Customer Info -->
+                    <div class="customer-info">
+                        <span class="customer-label">Customer:</span> 
+                        <span class="customer-name">${customerName.toUpperCase()}</span>
+                    </div>
+
+                    <!-- Items Table -->
+                    <div class="items-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">Sr</th>
+                                    <th style="width: 45%;">Item</th>
+                                    <th style="width: 15%;" class="center">Qty</th>
+                                    <th style="width: 15%;" class="right">Price</th>
+                                    <th style="width: 20%;" class="right">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${items.map((item, index) => `
+                                    <tr>
+                                        <td class="center"><strong>${index + 1}</strong></td>
+                                        <td>
+                                            <div class="item-name">${(item.name || item.productName || '').toUpperCase()}</div>
+                                            ${item.description ? `<div style="font-size: 12px; color: #666; margin-top: 3px;">${item.description}</div>` : ''}
+                                        </td>
+                                        <td class="center"><strong>${item.qty || item.quantity}</strong></td>
+                                        <td class="right">${(item.price || 0).toFixed(2)}</td>
+                                        <td class="right"><strong>${((item.qty || item.quantity) * (item.price || 0)).toFixed(2)}</strong></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Summary Table -->
+                    <table class="summary-table">
+                        <tr>
+                            <td><strong>Subtotal:</strong></td>
+                            <td><strong>Rs ${subtotal.toFixed(2)}</strong></td>
+                        </tr>
+                        ${tax > 0 ? `
+                        <tr>
+                            <td><strong>Tax:</strong></td>
+                            <td><strong>Rs ${tax.toFixed(2)}</strong></td>
+                        </tr>
+                        ` : ''}
+                        ${discount > 0 ? `
+                        <tr>
+                            <td><strong>Discount:</strong></td>
+                            <td><strong>- Rs ${discount.toFixed(2)}</strong></td>
+                        </tr>
+                        ` : ''}
+                        <tr>
+                            <td><strong>Net Total:</strong></td>
+                            <td><strong>Rs ${netTotal.toFixed(2)}</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cash Paid:</strong></td>
+                            <td><strong>Rs ${cashPaid.toFixed(2)}</strong></td>
+                        </tr>
+                        <tr class="balance-row">
+                            <td><strong>Balance:</strong></td>
+                            <td><strong>Rs ${balance.toFixed(2)}</strong></td>
+                        </tr>
+                    </table>
+
+                    <!-- Footer -->
+                    <div class="receipt-footer">
+                        <p><strong>Thank you for your business!</strong></p>
+                        <p>This is a computer-generated receipt.</p>
+                        <p>For queries: 042-37379542 | info@zaviyarchemicals.pk</p>
+                    </div>
+                `;
+
+            } catch (error) {
+                document.getElementById('invoiceContainer').innerHTML = `
+                    <div class="loading" style="color: #ef4444;">
+                        ❌ Failed to load invoice: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function downloadPDF() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ Generating PDF...';
+            button.disabled = true;
+
+            const element = document.getElementById('invoiceContainer');
+            const opt = {
+                margin: [5, 5, 5, 5],
+                filename: `Receipt_${urlParams.get('id')}_${new Date().toISOString().split('T')[0]}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    letterRendering: true
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait' 
+                }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                button.innerHTML = '✅ Downloaded!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+            }).catch(err => {
+                console.error('PDF generation error:', err);
+                button.innerHTML = '❌ Error';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
+

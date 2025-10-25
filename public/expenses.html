@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses - Zaviyar Chemicals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e8edf2 100%); min-height: 100vh; animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .header { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); padding: 24px 40px; box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3); display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; animation: fadeIn 0.5s ease-out; }
+        .header h1 { color: white; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 12px; }
+        .header h1::before { content: '💳'; font-size: 32px; }
+        .header-actions { display: flex; gap: 15px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-success { background: #10b981; color: white; }
+        .container { padding: 0 30px 30px; max-width: 1400px; margin: 0 auto; }
+        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .search-bar { margin-bottom: 20px; display: flex; gap: 15px; }
+        .search-bar input, .search-bar select { padding: 12px 16px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 14px; }
+        .search-bar input { flex: 1; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f9fafb; }
+        th { padding: 12px; text-align: left; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280; border-bottom: 2px solid #e5e7eb; }
+        td { padding: 12px; border-bottom: 1px solid #e5e7eb; color: #1f2937; }
+        tr:hover { background: #f9fafb; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h2 { color: #1f2937; font-size: 20px; }
+        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #374151; font-weight: 600; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 16px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 14px; color: #1f2937; font-weight: 600; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .loading { text-align: center; padding: 40px; color: #6b7280; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #6b7280; }
+        
+        /* ========================================
+           RESPONSIVE DESIGN FOR FORMS
+           ======================================== */
+        
+        /* Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+            .modal-content { max-width: 700px; padding: 25px; }
+            .form-row { gap: 12px; }
+        }
+        
+        /* Mobile Landscape & Small Tablets (481px - 768px) */
+        @media (max-width: 768px) {
+            .modal-content { max-width: 95%; width: 95%; padding: 20px; margin: 10px; max-height: 90vh; }
+            .modal-header h2 { font-size: 18px; }
+            .close-btn { font-size: 28px; }
+            .form-row { grid-template-columns: 1fr; gap: 10px; }
+            .form-group { margin-bottom: 16px; }
+            .form-group label { font-size: 13px; margin-bottom: 6px; }
+            .form-group input, .form-group select, .form-group textarea { padding: 10px 14px; font-size: 14px; }
+            .btn { padding: 12px 18px; font-size: 13px; }
+            .header { padding: 18px 20px; flex-direction: column; gap: 12px; align-items: flex-start; }
+            .header h1 { font-size: 22px; }
+            .header-actions { width: 100%; flex-direction: column; gap: 10px; }
+            .header-actions .btn { width: 100%; }
+            .container { padding: 0 15px 15px; }
+        }
+        
+        /* Mobile Portrait (320px - 480px) */
+        @media (max-width: 480px) {
+            .modal-content { width: 100%; height: 100%; max-height: 100vh; max-width: 100%; border-radius: 0; padding: 15px; margin: 0; }
+            .modal-header { margin-bottom: 15px; padding-bottom: 12px; border-bottom: 2px solid #e5e7eb; }
+            .modal-header h2 { font-size: 16px; }
+            .close-btn { font-size: 32px; padding: 0; min-width: 32px; }
+            .form-group { margin-bottom: 14px; }
+            .form-group label { font-size: 12px; margin-bottom: 6px; }
+            .form-group input, .form-group select, .form-group textarea { padding: 10px 12px; font-size: 13px; }
+            .btn { padding: 10px 16px; font-size: 13px; }
+            .header { padding: 15px; }
+            .header h1 { font-size: 18px; }
+            .header h1::before { font-size: 24px; }
+            .container { padding: 0 10px 10px; }
+            .card { padding: 15px; border-radius: 8px; }
+            table { font-size: 12px; }
+            th, td { padding: 8px 6px; }
+            th { font-size: 10px; }
+        }
+        
+        /* Extra Small Mobile (< 360px) */
+        @media (max-width: 360px) {
+            .modal-content { padding: 12px; }
+            .modal-header h2 { font-size: 15px; }
+            .form-group label { font-size: 11px; }
+            .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; font-size: 12px; }
+            .btn { padding: 8px 14px; font-size: 12px; }
+            .header h1 { font-size: 16px; }
+            table { font-size: 11px; }
+            th, td { padding: 6px 4px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Expense Management</h1>
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="window.location.href='/dashboard.html'">Back to Dashboard</button>
+            <button class="btn btn-primary" onclick="openAddModal()">+ Add Expense</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search expenses..." onkeyup="searchExpenses()">
+                <select id="categoryFilter" onchange="searchExpenses()">
+                    <option value="">All Categories</option>
+                    <option value="Rent">Rent</option>
+                    <option value="Utilities">Utilities</option>
+                    <option value="Salaries">Salaries</option>
+                    <option value="Transportation">Transportation</option>
+                    <option value="Office Supplies">Office Supplies</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input type="date" id="fromDate" onchange="searchExpenses()">
+                <input type="date" id="toDate" onchange="searchExpenses()">
+            </div>
+
+            <div id="expensesList">
+                <div class="loading">Loading expenses...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="expenseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">💳 Add Expense</h2>
+                <button class="close-btn" onclick="closeModal()" title="Close (Esc)">&times;</button>
+            </div>
+            <form id="expenseForm" onsubmit="saveExpense(event)">
+                <input type="hidden" id="expenseId">
+                
+                <!-- Category Section -->
+                <div style="background: #fef3c7; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="color: #b45309; font-size: 16px; margin-bottom: 15px; font-weight: 700;">📂 Expense Category</h3>
+                    <div class="form-group">
+                        <label>Category <span style="color: #ef4444;">*</span></label>
+                        <select id="category" required>
+                            <option value="">-- Select Category --</option>
+                            <option value="Rent">🏢 Rent</option>
+                            <option value="Utilities">💡 Utilities (Electric/Water/Gas)</option>
+                            <option value="Salaries">👥 Salaries & Wages</option>
+                            <option value="Transportation">🚚 Transportation & Delivery</option>
+                            <option value="Office Supplies">📎 Office Supplies</option>
+                            <option value="Marketing">📢 Marketing & Advertising</option>
+                            <option value="Maintenance">🔧 Maintenance & Repairs</option>
+                            <option value="Insurance">🛡️ Insurance</option>
+                            <option value="Taxes">💼 Taxes & Fees</option>
+                            <option value="Other">📦 Other</option>
+                        </select>
+                        <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Choose the expense category</small>
+                    </div>
+                </div>
+
+                <!-- Amount & Date Section -->
+                <div style="background: #fef2f2; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="color: #dc2626; font-size: 16px; margin-bottom: 15px; font-weight: 700;">💰 Amount & Date</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Amount (Rs.) <span style="color: #ef4444;">*</span></label>
+                            <div style="position: relative;">
+                                <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #6b7280; font-weight: 600;">Rs.</span>
+                                <input type="number" id="amount" step="0.01" required min="0" placeholder="0.00" style="padding-left: 45px;">
+                            </div>
+                            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Enter expense amount</small>
+                        </div>
+                        <div class="form-group">
+                            <label>📅 Date <span style="color: #ef4444;">*</span></label>
+                            <input type="date" id="expenseDate" required>
+                            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">When did you pay?</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Section -->
+                <div style="background: #ede9fe; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="color: #7c3aed; font-size: 16px; margin-bottom: 15px; font-weight: 700;">💳 Payment Method</h3>
+                    <div class="form-group">
+                        <label>How did you pay? <span style="color: #ef4444;">*</span></label>
+                        <select id="paymentMethod" required>
+                            <option value="">-- Select Method --</option>
+                            <option value="cash">💵 Cash</option>
+                            <option value="bank">🏦 Bank Transfer</option>
+                            <option value="cheque">📝 Cheque</option>
+                            <option value="credit">💳 Credit Card</option>
+                            <option value="debit">💳 Debit Card</option>
+                        </select>
+                        <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Choose payment method used</small>
+                    </div>
+                </div>
+
+                <!-- Description Section -->
+                <div class="form-group" style="background: #f9fafb; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <label>📝 Description / Notes</label>
+                    <textarea id="description" rows="3" placeholder="Add details about this expense... (optional)" style="resize: vertical; min-height: 80px;"></textarea>
+                    <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Optional: Add any relevant details or receipt number</small>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 12px; justify-content: flex-end; padding-top: 20px; border-top: 2px solid #e5e7eb;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()" style="padding: 14px 28px; font-size: 15px;">
+                        ❌ Cancel
+                    </button>
+                    <button type="submit" class="btn btn-success" id="saveBtn" style="padding: 14px 32px; font-size: 15px; font-weight: 700; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);">
+                        ✅ Save Expense
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/login.html';
+
+        let expenses = [];
+        loadExpenses();
+
+        async function loadExpenses() {
+            try {
+                const response = await fetch('/api/expenses', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('Failed to load expenses');
+                const result = await response.json();
+                expenses = result.data || [];
+                displayExpenses(expenses);
+            } catch (error) {
+                document.getElementById('expensesList').innerHTML = `<div class="error">Failed to load expenses</div>`;
+            }
+        }
+
+        function displayExpenses(expensesToShow) {
+            const container = document.getElementById('expensesList');
+            if (expensesToShow.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>No expenses found</h3></div>';
+                return;
+            }
+
+            let html = '<table><thead><tr><th>Date</th><th>Category</th><th>Amount</th><th>Payment Method</th><th>Description</th><th>Actions</th></tr></thead><tbody>';
+            expensesToShow.forEach(expense => {
+                const date = new Date(expense.date || expense.createdAt).toLocaleDateString();
+                html += `<tr>
+                    <td>${date}</td>
+                    <td><strong>${expense.category}</strong></td>
+                    <td><strong>$${expense.amount.toFixed(2)}</strong></td>
+                    <td>${expense.paymentMethod}</td>
+                    <td>${expense.description || '-'}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick='editExpense(${JSON.stringify(expense)})'>Edit</button>
+                        <button class="btn btn-danger" onclick="deleteExpense(${expense.id})">Delete</button>
+                    </td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function searchExpenses() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+
+            let filtered = expenses.filter(expense => {
+                const matchesSearch = (expense.description || '').toLowerCase().includes(searchTerm);
+                const matchesCategory = !category || expense.category === category;
+                let matchesDate = true;
+                if (fromDate || toDate) {
+                    const expenseDate = new Date(expense.date || expense.createdAt);
+                    if (fromDate) matchesDate = matchesDate && expenseDate >= new Date(fromDate);
+                    if (toDate) matchesDate = matchesDate && expenseDate <= new Date(toDate);
+                }
+                return matchesSearch && matchesCategory && matchesDate;
+            });
+            displayExpenses(filtered);
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add Expense';
+            document.getElementById('expenseForm').reset();
+            document.getElementById('expenseId').value = '';
+            document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('expenseModal').classList.add('active');
+        }
+
+        function editExpense(expense) {
+            document.getElementById('modalTitle').textContent = 'Edit Expense';
+            document.getElementById('expenseId').value = expense.id;
+            document.getElementById('category').value = expense.category;
+            document.getElementById('amount').value = expense.amount;
+            document.getElementById('expenseDate').value = (expense.date || expense.createdAt).split('T')[0];
+            document.getElementById('paymentMethod').value = expense.paymentMethod;
+            document.getElementById('description').value = expense.description || '';
+            document.getElementById('expenseModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('expenseModal').classList.remove('active');
+        }
+
+        async function saveExpense(event) {
+            event.preventDefault();
+            const id = document.getElementById('expenseId').value;
+            const data = {
+                category: document.getElementById('category').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                date: document.getElementById('expenseDate').value,
+                paymentMethod: document.getElementById('paymentMethod').value,
+                description: document.getElementById('description').value
+            };
+
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+
+            try {
+                const url = id ? `/api/expenses/${id}` : '/api/expenses';
+                const method = id ? 'PUT' : 'POST';
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error('Failed to save expense');
+                closeModal();
+                loadExpenses();
+                alert(id ? 'Expense updated!' : 'Expense added!');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Expense';
+            }
+        }
+
+        async function deleteExpense(id) {
+            if (!confirm('Delete this expense?')) return;
+            try {
+                const response = await fetch(`/api/expenses/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('Failed to delete');
+                loadExpenses();
+                alert('Expense deleted!');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
+

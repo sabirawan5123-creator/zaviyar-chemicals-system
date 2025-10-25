@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacts - Zaviyar Chemicals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8edf2 100%);
+            min-height: 100vh;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            padding: 24px 40px;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1::before {
+            content: '👥';
+            font-size: 32px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .container {
+            padding: 0 30px 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #6b7280;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #1f2937;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .balance-positive {
+            color: #10b981;
+            font-weight: 700;
+        }
+
+        .balance-negative {
+            color: #ef4444;
+            font-weight: 700;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .actions button {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #1f2937;
+            font-size: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        .error {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            border-radius: 8px;
+            color: #991b1b;
+            margin: 20px 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1024px) { .modal-content { max-width: 700px; padding: 25px; } .form-row { gap: 12px; } }
+        @media (max-width: 768px) { .modal-content { max-width: 95%; width: 95%; padding: 20px; margin: 10px; max-height: 90vh; } .modal-header h2 { font-size: 18px; } .close-btn { font-size: 28px; } .form-row { grid-template-columns: 1fr; gap: 10px; } .form-group { margin-bottom: 16px; } .form-group label { font-size: 13px; margin-bottom: 6px; } .form-group input, .form-group select, .form-group textarea { padding: 10px 14px; font-size: 14px; } .btn { padding: 12px 18px; font-size: 13px; } .header { padding: 18px 20px; flex-direction: column; gap: 12px; align-items: flex-start; } .header h1 { font-size: 22px; } .header-actions { width: 100%; flex-direction: column; gap: 10px; } .header-actions .btn { width: 100%; } .container { padding: 0 15px 15px; } }
+        @media (max-width: 480px) { .modal-content { width: 100%; height: 100%; max-height: 100vh; max-width: 100%; border-radius: 0; padding: 15px; margin: 0; } .modal-header { margin-bottom: 15px; padding-bottom: 12px; border-bottom: 2px solid #e5e7eb; } .modal-header h2 { font-size: 16px; } .close-btn { font-size: 32px; padding: 0; min-width: 32px; } .form-group { margin-bottom: 14px; } .form-group label { font-size: 12px; margin-bottom: 6px; } .form-group input, .form-group select, .form-group textarea { padding: 10px 12px; font-size: 13px; } .btn { padding: 10px 16px; font-size: 13px; } .header { padding: 15px; } .header h1 { font-size: 18px; } .header h1::before { font-size: 24px; } .container { padding: 0 10px 10px; } .card { padding: 15px; border-radius: 8px; } table { font-size: 12px; } th, td { padding: 8px 6px; } th { font-size: 10px; } }
+        @media (max-width: 360px) { .modal-content { padding: 12px; } .modal-header h2 { font-size: 15px; } .form-group label { font-size: 11px; } .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; font-size: 12px; } .btn { padding: 8px 14px; font-size: 12px; } .header h1 { font-size: 16px; } table { font-size: 11px; } th, td { padding: 6px 4px; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Contacts Management</h1>
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="window.location.href='/dashboard.html'">Back to Dashboard</button>
+            <button class="btn btn-primary" onclick="openAddModal()">+ Add Contact</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('all')">All Contacts</div>
+            <div class="tab" onclick="switchTab('customer')">Customers</div>
+            <div class="tab" onclick="switchTab('supplier')">Suppliers</div>
+        </div>
+
+        <div class="card">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search contacts by name, email, or phone..." onkeyup="searchContacts()">
+            </div>
+
+            <div id="contactsList">
+                <div class="loading">Loading contacts...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">👤 Add Contact</h2>
+                <button class="close-btn" onclick="closeModal()" title="Close (Esc)">&times;</button>
+            </div>
+            <form id="contactForm" onsubmit="saveContact(event)">
+                <input type="hidden" id="contactId">
+                
+                <!-- Contact Type Section -->
+                <div style="background: #e0e7ff; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="color: #4338ca; font-size: 16px; margin-bottom: 15px; font-weight: 700;">🏷️ Contact Type</h3>
+                    <p style="color: #64748b; font-size: 13px; margin-bottom: 15px;">✨ Check at least one option below</p>
+                    
+                    <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: white; padding: 15px 20px; border-radius: 10px; border: 2px solid #c7d2fe; flex: 1; min-width: 200px;">
+                            <input type="checkbox" id="isCustomerCheck" style="width: 20px; height: 20px; cursor: pointer;">
+                            <div>
+                                <div style="font-weight: 700; color: #4338ca; font-size: 15px;">💼 Customer</div>
+                                <div style="font-size: 12px; color: #64748b;">Buys from us</div>
+                            </div>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: white; padding: 15px 20px; border-radius: 10px; border: 2px solid #c7d2fe; flex: 1; min-width: 200px;">
+                            <input type="checkbox" id="isSupplierCheck" style="width: 20px; height: 20px; cursor: pointer;">
+                            <div>
+                                <div style="font-weight: 700; color: #4338ca; font-size: 15px;">🏭 Supplier</div>
+                                <div style="font-size: 12px; color: #64748b;">Sells to us</div>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <small style="color: #64748b; font-size: 12px; margin-top: 12px; display: block;">💡 You can check both if this contact is both a customer and supplier</small>
+                </div>
+
+                <!-- Business Info Section -->
+                <div style="background: #dbeafe; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="color: #1e40af; font-size: 16px; margin-bottom: 15px; font-weight: 700;">🏢 Business Information</h3>
+                    <div class="form-group">
+                        <label>Company/Person Name <span style="color: #ef4444;">*</span></label>
+                        <input type="text" id="contactName" required placeholder="e.g., ABC Pharmaceuticals Ltd">
+                        <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Full business or person name</small>
+                    </div>
+                </div>
+
+                <!-- Contact Details Section -->
+                <div style="background: #d1fae5; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="color: #065f46; font-size: 16px; margin-bottom: 15px; font-weight: 700;">📞 Contact Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>📧 Email Address</label>
+                            <input type="email" id="contactEmail" placeholder="email@company.com">
+                            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Business email</small>
+                        </div>
+                        <div class="form-group">
+                            <label>📱 Phone Number</label>
+                            <input type="tel" id="contactPhone" placeholder="+92-XXX-XXXXXXX">
+                            <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Contact number</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Section -->
+                <div class="form-group" style="background: #fef3c7; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <label>📍 Business Address</label>
+                    <textarea id="contactAddress" rows="3" placeholder="Enter complete address...&#10;Street, Area, City, Province" style="resize: vertical; min-height: 80px;"></textarea>
+                    <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Full business address for deliveries and invoices</small>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 12px; justify-content: flex-end; padding-top: 20px; border-top: 2px solid #e5e7eb;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()" style="padding: 14px 28px; font-size: 15px;">
+                        ❌ Cancel
+                    </button>
+                    <button type="submit" class="btn btn-success" id="saveBtn" style="padding: 14px 32px; font-size: 15px; font-weight: 700; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);">
+                        ✅ Save Contact
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        let contacts = [];
+        let currentFilter = 'all';
+
+        // Load contacts on page load
+        loadContacts();
+
+        async function loadContacts() {
+            try {
+                // Fetch contacts
+                const contactsResponse = await fetch('/api/contacts', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!contactsResponse.ok) {
+                    if (contactsResponse.status === 401) {
+                        localStorage.clear();
+                        window.location.href = '/login.html';
+                        return;
+                    }
+                    throw new Error('Failed to load contacts');
+                }
+
+                contacts = (await contactsResponse.json()).data || [];
+                
+                // Fetch sales, purchases to calculate balances
+                const [salesRes, purchasesRes] = await Promise.all([
+                    fetch('/api/sales', { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch('/api/purchases', { headers: { 'Authorization': `Bearer ${token}` } })
+                ]);
+                
+                const sales = (await salesRes.json()).data || [];
+                const purchases = (await purchasesRes.json()).data || [];
+                
+                // Calculate balance for each contact
+                contacts = contacts.map(contact => {
+                    let balance = 0;
+                    
+                    // Add receivables (unpaid sales where they are customer)
+                    sales.forEach(sale => {
+                        if (sale.customerId == contact.id && sale.paymentStatus !== 'paid') {
+                            balance += parseFloat(sale.total || 0);
+                        }
+                    });
+                    
+                    // Subtract payables (unpaid purchases where they are supplier)
+                    purchases.forEach(purchase => {
+                        if (purchase.supplierId == contact.id && purchase.paymentStatus !== 'paid') {
+                            balance -= parseFloat(purchase.total || 0);
+                        }
+                    });
+                    
+                    return { ...contact, calculatedBalance: balance };
+                });
+                
+                console.log('Contacts loaded:', contacts.length);
+                console.log('Sample contact:', contacts[0]);
+                
+                displayContacts(contacts);
+            } catch (error) {
+                console.error('Load contacts error:', error);
+                document.getElementById('contactsList').innerHTML = `
+                    <div class="error">Failed to load contacts. ${error.message}</div>
+                `;
+            }
+        }
+
+        function switchTab(filter) {
+            currentFilter = filter;
+            
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filter and display based on new flags
+            let filtered = contacts;
+            if (filter === 'customer') {
+                filtered = contacts.filter(c => c.isCustomer === 1 || c.type === 'customer' || c.type === 'both');
+            } else if (filter === 'supplier') {
+                filtered = contacts.filter(c => c.isSupplier === 1 || c.type === 'supplier' || c.type === 'both');
+            }
+            displayContacts(filtered);
+        }
+
+        function displayContacts(contactsToShow) {
+            const container = document.getElementById('contactsList');
+            
+            if (contactsToShow.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        <h3>No contacts found</h3>
+                        <p>Start by adding your first ${currentFilter === 'all' ? 'contact' : currentFilter}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Balance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            contactsToShow.forEach(contact => {
+                // Show badges based on isCustomer and isSupplier flags
+                const isCustomer = contact.isCustomer === 1 || contact.type === 'customer' || contact.type === 'both';
+                const isSupplier = contact.isSupplier === 1 || contact.type === 'supplier' || contact.type === 'both';
+                
+                let typeBadges = '';
+                if (isCustomer && isSupplier) {
+                    typeBadges = '<span class="badge badge-success">💼 Customer</span> <span class="badge badge-danger">🏭 Supplier</span>';
+                } else if (isCustomer) {
+                    typeBadges = '<span class="badge badge-success">💼 Customer</span>';
+                } else if (isSupplier) {
+                    typeBadges = '<span class="badge badge-danger">🏭 Supplier</span>';
+                } else {
+                    typeBadges = '<span class="badge">-</span>';
+                }
+                
+                const balance = contact.calculatedBalance || contact.balance || 0;
+                const balanceClass = balance >= 0 ? 'balance-positive' : 'balance-negative';
+                const balanceLabel = balance >= 0 ? '(Receivable)' : '(Payable)';
+
+                html += `
+                    <tr>
+                        <td>${typeBadges}</td>
+                        <td><strong>${contact.name}</strong></td>
+                        <td>${contact.email || '-'}</td>
+                        <td>${contact.phone || '-'}</td>
+                        <td class="${balanceClass}">Rs. ${Math.abs(balance).toLocaleString('en-PK', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${balanceLabel}</td>
+                        <td>
+                            <div class="actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button class="btn btn-success" onclick="viewLedger(${contact.id}, '${contact.name.replace(/'/g, "\\'")})" style="font-size: 12px; padding: 6px 12px;" title="View Ledger">📊 Ledger</button>
+                                <button class="btn btn-primary" onclick='editContact(${JSON.stringify(contact)})' style="font-size: 12px; padding: 6px 12px;">✏️ Edit</button>
+                                <button class="btn btn-danger" onclick="deleteContact(${contact.id})" style="font-size: 12px; padding: 6px 12px;">🗑️ Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function searchContacts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            let filtered = contacts.filter(contact => {
+                // Check filter based on new flags
+                let matchesFilter = true;
+                if (currentFilter === 'customer') {
+                    matchesFilter = contact.isCustomer === 1 || contact.type === 'customer' || contact.type === 'both';
+                } else if (currentFilter === 'supplier') {
+                    matchesFilter = contact.isSupplier === 1 || contact.type === 'supplier' || contact.type === 'both';
+                }
+                
+                const matchesSearch = contact.name.toLowerCase().includes(searchTerm) || 
+                                    (contact.email && contact.email.toLowerCase().includes(searchTerm)) ||
+                                    (contact.phone && contact.phone.includes(searchTerm));
+                return matchesFilter && matchesSearch;
+            });
+
+            displayContacts(filtered);
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = '👤 Add Contact';
+            document.getElementById('contactForm').reset();
+            document.getElementById('contactId').value = '';
+            document.getElementById('isCustomerCheck').checked = false;
+            document.getElementById('isSupplierCheck').checked = false;
+            document.getElementById('contactModal').classList.add('active');
+        }
+
+        function editContact(contact) {
+            document.getElementById('modalTitle').textContent = '👤 Edit Contact';
+            document.getElementById('contactId').value = contact.id;
+            
+            // Set checkboxes based on contact flags
+            const isCustomer = contact.isCustomer === 1 || contact.type === 'customer' || contact.type === 'both';
+            const isSupplier = contact.isSupplier === 1 || contact.type === 'supplier' || contact.type === 'both';
+            
+            document.getElementById('isCustomerCheck').checked = isCustomer;
+            document.getElementById('isSupplierCheck').checked = isSupplier;
+            document.getElementById('contactName').value = contact.name;
+            document.getElementById('contactEmail').value = contact.email || '';
+            document.getElementById('contactPhone').value = contact.phone || '';
+            document.getElementById('contactAddress').value = contact.address || '';
+            document.getElementById('contactModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('contactModal').classList.remove('active');
+        }
+
+        async function saveContact(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('contactId').value;
+            const isCustomer = document.getElementById('isCustomerCheck').checked;
+            const isSupplier = document.getElementById('isSupplierCheck').checked;
+            
+            // Validate at least one is selected
+            if (!isCustomer && !isSupplier) {
+                alert('❌ Please select at least one type (Customer or Supplier)');
+                return;
+            }
+            
+            // Determine type for backward compatibility
+            let contactType = 'customer';
+            if (isCustomer && isSupplier) {
+                contactType = 'both';
+            } else if (isSupplier) {
+                contactType = 'supplier';
+            }
+            
+            const data = {
+                type: contactType,
+                isCustomer,
+                isSupplier,
+                name: document.getElementById('contactName').value,
+                email: document.getElementById('contactEmail').value,
+                phone: document.getElementById('contactPhone').value,
+                address: document.getElementById('contactAddress').value
+            };
+
+            console.log('💾 Saving contact with checkboxes:', data);
+            console.log('📋 Customer checked:', isCustomer, '| Supplier checked:', isSupplier, '| Final type:', contactType);
+
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+
+            try {
+                const url = id ? `/api/contacts/${id}` : '/api/contacts';
+                const method = id ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                console.log('Server response:', result);
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Failed to save contact');
+                }
+
+                closeModal();
+                await loadContacts();
+                alert(id ? '✅ Contact updated successfully! Changes will reflect in Sales/Purchase pages.' : '✅ Contact added successfully!');
+            } catch (error) {
+                console.error('Save contact error:', error);
+                alert('❌ Error: ' + error.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Contact';
+            }
+        }
+
+        async function deleteContact(id) {
+            if (!confirm('Are you sure you want to delete this contact?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/contacts/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete contact');
+                }
+
+                loadContacts();
+                alert('Contact deleted successfully!');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        // Open Professional Ledger Report
+        function viewLedger(contactId, contactName) {
+            // Open ledger report in new window
+            window.open(`/ledger-report.html?id=${contactId}&name=${encodeURIComponent(contactName)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
+
