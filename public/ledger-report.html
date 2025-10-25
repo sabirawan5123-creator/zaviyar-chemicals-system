@@ -438,6 +438,12 @@
 
                 console.log('✅ Contact loaded:', contact);
 
+                // Store contact type globally
+                window.contactType = {
+                    isCustomer: contact.isCustomer,
+                    isSupplier: contact.isSupplier
+                };
+
                 // Set party name and type
                 document.getElementById('partyName').textContent = contact.name;
 
@@ -634,10 +640,19 @@
 
             const balance = totalDebit - totalCredit;
             let balanceText = '';
+            
+            // Determine label based on contact type
+            const isSupplier = window.contactType && window.contactType.isSupplier;
+            const isCustomer = window.contactType && window.contactType.isCustomer;
+            
             if (balance > 0) {
-                balanceText = `<strong style="color: #dc2626;">${balance.toLocaleString('en-PK', {minimumFractionDigits: 2})} (Dr)</strong>`;
+                // Positive balance (Debit)
+                const label = isSupplier ? 'Payable' : 'Receivable';
+                balanceText = `<strong style="color: #dc2626;">${balance.toLocaleString('en-PK', {minimumFractionDigits: 2})} (${label})</strong>`;
             } else if (balance < 0) {
-                balanceText = `<strong style="color: #059669;">${Math.abs(balance).toLocaleString('en-PK', {minimumFractionDigits: 2})} (Cr)</strong>`;
+                // Negative balance (Credit)
+                const label = isSupplier ? 'Receivable' : 'Payable';
+                balanceText = `<strong style="color: #059669;">${Math.abs(balance).toLocaleString('en-PK', {minimumFractionDigits: 2})} (${label})</strong>`;
             } else {
                 balanceText = `<strong>0.00 (Settled)</strong>`;
             }
